@@ -121,10 +121,10 @@ export const posibleMovementsObj = (pawnType, arrTd, gameState) => {
     },
     queen: {
       normalMove: {
-        obliqueLeftFoward: bishopMove(type, Row, Index, -9, arrTd, color),
-        obliqueRightFoward: bishopMove(type, Row, Index, -7, arrTd, color),
-        obliqueLeftBackWard: bishopMove(type, Row, Index, -9, arrTd, color),
-        obliqueRightBackWard: bishopMove(type, Row, Index, 7, arrTd, color),
+        obliqueLeftFoward: bishopMove(type, 8, Index, -9, arrTd, color),
+        obliqueRightFoward: bishopMove(type, 8, Index, -7, arrTd, color),
+        obliqueLeftBackWard: bishopMove(type, 8, Index, 9, arrTd, color),
+        obliqueRightBackWard: bishopMove(type, 8, Index, 7, arrTd, color),
         left: rookMove(type, 8, Index, -1, arrTd, color),
         right: rookMove(type, 8, Index, 1, arrTd, color),
         foward: rookMove(type, 8, Index, 8, arrTd, color),
@@ -132,10 +132,10 @@ export const posibleMovementsObj = (pawnType, arrTd, gameState) => {
       },
 
       eatMove: {
-        obliqueLeftFoward: bishopMove(type, Row, Index, -9, arrTd, color),
-        obliqueRightFoward: bishopMove(type, Row, Index, -7, arrTd, color),
-        obliqueLeftBackWard: bishopMove(type, Row, Index, -9, arrTd, color),
-        obliqueRightBackWard: bishopMove(type, Row, Index, 7, arrTd, color),
+        obliqueLeftFoward: bishopMove(type, 8, Index, -9, arrTd, color),
+        obliqueRightFoward: bishopMove(type, 8, Index, -7, arrTd, color),
+        obliqueLeftBackWard: bishopMove(type, 8, Index, -9, arrTd, color),
+        obliqueRightBackWard: bishopMove(type, 8, Index, 7, arrTd, color),
         left: makeArray(8, (i) => -i),
         right: makeArray(8, (i) => i),
         foward: makeArray(8, (i) => i * 8),

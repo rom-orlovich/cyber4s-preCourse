@@ -51,17 +51,28 @@ export const checkNumMovesOfPawn = (numMoves) => {
   return NumMoves === 0 ? [8, 16] : [8];
 };
 
-export const movePawnToOtherPile = (queryPos, newPos, type) => {
+export const movePawnToOtherPile = (queryPos, newPos, pawnType, fun) => {
+  let [index, type, number, color] = pawnType.split("-");
   const choosenImg = selectElement(
-    `img[data-type-pawn*="${queryPos}-${type}"]`
+    `img[data-type-pawn*="${queryPos}-${type}-${number}-${color}"]`
   );
 
   const choosenTD = selectElement(`td[data-index-pos*="${newPos}"]`);
+
   if (!(choosenImg && choosenTD)) return;
 
   const dataSetImg = choosenImg.dataset.typePawn;
   const indexPile = choosenTD.dataset.indexPile;
 
   choosenImg.dataset.typePawn = editDataSet(dataSetImg, 0, indexPile);
-  !choosenTD.firstElementChild && choosenTD.appendChild(choosenImg);
+  const img = choosenTD.firstElementChild;
+
+  if (!img) return choosenTD.appendChild(choosenImg) && true;
+  else {
+    let [index1, type1, number1, color1] = img.dataset.typePawn.split("-");
+    if (color1 === color) return false;
+    choosenTD.mouseover = null;
+    choosenTD.removeChild(img);
+    return choosenTD.appendChild(choosenImg) && true;
+  }
 };

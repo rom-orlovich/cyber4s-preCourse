@@ -31,7 +31,6 @@ const verticalPossibleMovment = (change, curIndex, arr, color) => {
   const newIndex = checkIligalePos(curIndex + change, curIndex, arr);
   const [row, column] = arr[curIndex]?.dataset.indexPos.split(",");
   const [rowNext, columnNext] = arr[newIndex]?.dataset.indexPos.split(",");
-
   if (
     !(
       (rowNext !== row && column === columnNext) ||
@@ -55,6 +54,7 @@ export const bishopMove = (
   arrTd,
   color
 ) => {
+  if (type !== "bishop" && type !== "queen") return [];
   const nextPileChild = getNextPileChild(curIndex + change, curIndex, arrTd);
   const getColorDataSet = getDataFromDataSet(nextPileChild, 3);
   return getColorDataSet === color || (type !== "bishop" && type !== "queen")
@@ -67,10 +67,11 @@ export const bishopMove = (
 };
 
 export const rookMove = (type, lengthLoop, curIndex, change, arrTd, color) => {
+  if (type !== "rook" && type !== "queen") return [];
   const nextPileChild = getNextPileChild(curIndex + change, curIndex, arrTd);
   const getColorDataSet = getDataFromDataSet(nextPileChild, 3);
 
-  return getColorDataSet === color || (type !== "rook" && type !== "queen")
+  return getColorDataSet === color
     ? []
     : makeArray(
         lengthLoop,
@@ -79,44 +80,59 @@ export const rookMove = (type, lengthLoop, curIndex, change, arrTd, color) => {
       );
 };
 
-export const pawnMove = (type, curIndex, changes, arrTd, boardDir, color) => {
-  const changeDir = cheakBoardDir(boardDir, color, changes);
-  const nextPileChild = getNextPileChild(
-    curIndex + changeDir[0],
-    curIndex,
-    arrTd
-  );
+export const pawnMove = (
+  type,
+  curIndex = curIndex * 1,
+  changes,
+  arrTd,
+  boardDir,
+  color
+) => {
+  if (type !== "pawn") return [];
+  let arrChanges = cheakBoardDir(boardDir, color, [7, 9, ...changes]);
+  const arr = arrChanges.map((change) => {
+    const newIndex = checkIligalePos(curIndex + change, curIndex, arrTd);
+    const checkOblique =
+      newIndex - 7 === curIndex ||
+      newIndex + 7 === curIndex ||
+      newIndex - 9 === curIndex ||
+      newIndex + 9 === curIndex;
+    const td = arrTd[newIndex];
+    if (!td) return 0;
+    const img = td?.firstElementChild;
+    if (!img && !checkOblique) return change;
 
-  const colorDataSet = getDataFromDataSet(nextPileChild, 3);
-  return colorDataSet === color || type !== "pawn" ? [] : changeDir;
+    if (img && getDataFromDataSet(img, 3) !== color && checkOblique)
+      return change;
+    if (img && getDataFromDataSet(img, 3) === color) return 0;
+    return 0;
+  });
+  return arr;
+};
+
+const checKnightMove = (curIndex, newIndex, arr) => {
+  if (!arr[newIndex]) return;
+  const [row, column] = arr[curIndex]?.dataset.indexPos?.split(",");
+  const [rowNext, columnNext] = arr[newIndex].dataset?.indexPos?.split(",");
+  if (
+    Math.abs(rowNext - row) * 2 === Math.abs(column - columnNext) ||
+    Math.abs(rowNext - row) === Math.abs(column - columnNext) * 2
+  )
+    return arr[newIndex];
 };
 
 export const knightMove = (type, curIndex, changes, arrTd, color) => {
-  const nextShortPileChild = getNextPileChild(
-    curIndex + changes[0],
-    curIndex,
-    arrTd
-  );
-  const nextPileLongChild = getNextPileChild(
-    curIndex + changes[1],
-    curIndex,
-    arrTd
-  );
-
-  const colorDataSetShort = getDataFromDataSet(nextShortPileChild, 3);
-
-  const colorDataSetLong = getDataFromDataSet(nextPileLongChild, 3);
-  if (
-    type !== "knight" ||
-    (colorDataSetShort === color && colorDataSetLong === color)
-  )
-    return [];
-
-  if (colorDataSetShort === color && colorDataSetLong !== color)
-    return [changes[1]];
-  if (colorDataSetShort !== color && colorDataSetLong === color)
-    return [changes[0]];
-  else return changes;
+  if (type !== "knight") return [];
+  return changes.map((change) => {
+    const newIndex = checkIligalePos(curIndex + change, curIndex, arrTd);
+    const checkNextPileChild = checKnightMove(curIndex, newIndex, arrTd);
+    if (!checkNextPileChild) return 0;
+    const img = checkNextPileChild.firstElementChild;
+    if (!img) return change;
+    const colorDataSet = getDataFromDataSet(img, 3);
+    if (colorDataSet !== color) return change;
+    else return 0;
+  });
 };
 
 export const kingMove = (type, curIndex, changes, arrTd, color) => {

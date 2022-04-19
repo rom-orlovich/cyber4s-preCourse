@@ -1,6 +1,7 @@
 import {
   checkIligalePos,
   editDatasSetByQuery,
+  getNextPileChild,
   movePawnToOtherPile,
 } from "../pawnsMovment/pawnMovementHelpers.js";
 
@@ -31,16 +32,18 @@ export const handleClickPawn = (
   const curIndex = index * 1;
   posibleMoves.forEach((el) => {
     const newIndex = checkIligalePos(curIndex + el, curIndex, arrTD);
+    const handler = (e) => {
+      const target = e.target.closest("td");
+      const indexPosTDClick = target?.dataset?.indexPos;
 
-    arrTD[newIndex].addEventListener("click", (e) => {
-      const indexPosTDClick = e.target.dataset?.indexPos;
+      if (!target) return;
 
-      if (!indexPosTDClick) return;
-
-      movePawnToOtherPile(curIndex, indexPosTDClick, type);
+      let bool = movePawnToOtherPile(curIndex, indexPosTDClick, pawnType);
 
       if (type === "pawn") editDatasSetByQuery(newIndex, 4, "1");
-      handleAfterClick(color);
-    });
+      handleAfterClick(color, bool);
+      arrTD[newIndex].removeEventListener("click", handler);
+    };
+    arrTD[newIndex].addEventListener("click", handler);
   });
 };

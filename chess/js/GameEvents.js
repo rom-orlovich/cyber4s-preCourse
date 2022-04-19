@@ -39,9 +39,9 @@ export class GameEvents {
         const dataSetInfo = e.target.dataset.typePawn;
         if (!dataSetInfo) return;
 
-        const handleAfterClick = (color) => {
+        const handleAfterClick = (color, bool = true) => {
           changeDirFun(color === "white" ? "black" : "white");
-          this.setPlayerTurn(color);
+          bool && this.setPlayerTurn(color);
         };
         this.handlerClickMovement(dataSetInfo, this.dataTd, handleAfterClick);
       },
@@ -78,7 +78,7 @@ export class GameEvents {
       this.dataTd,
       this.gameState
     );
-    normalMove = getObjKeyWithValue(normalMove);
+
     let allMovement = genrateObjKeyValueToArr(normalMove);
     handlePosibleMovment(dataSetInfo, allMovement, arrTD, addEvent);
   }
@@ -89,6 +89,7 @@ export class GameEvents {
       arrTD,
       this.gameState
     );
+
     let allMovement = genrateObjKeyValueToArr(normalMove);
 
     handleClickPawn(dataSetInfo, allMovement, arrTD, handleAfterClick);
