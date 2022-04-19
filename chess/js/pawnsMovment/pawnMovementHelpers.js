@@ -58,13 +58,7 @@ export const movePawnToOtherPile = (queryPos, newPos, type) => {
 
   const choosenTD = selectElement(`td[data-index-pos*="${newPos}"]`);
   if (!(choosenImg && choosenTD)) return;
-  console.log(
-    "movePawnToOtherPile",
-    "choosenImg",
-    choosenImg,
-    "choosenTD",
-    choosenTD
-  );
+
   const dataSetImg = choosenImg.dataset.typePawn;
   const indexPile = choosenTD.dataset.indexPile;
 

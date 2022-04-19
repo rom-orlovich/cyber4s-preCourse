@@ -1,5 +1,11 @@
 import { makeArray } from "../Helpers/utilitesFun.js";
-import { bishopMove, pawnMove, rookMove } from "./pawnDirMovments.js";
+import {
+  bishopMove,
+  kingMove,
+  knightMove,
+  pawnMove,
+  rookMove,
+} from "./pawnDirMovments.js";
 import {
   cheakBoardDir,
   checkIligalePos,
@@ -16,12 +22,7 @@ export const posibleMovementsObj = (pawnType, arrTd, gameState) => {
   const Row = row * 1;
   let numMovesPawn =
     type === "pawn" ? checkNumMovesOfPawn(pawnTypeArr[4]) : [0];
-  // console.log(
-  //   "posibleMovementsObj",
-  //   "bishopMove",
-  //   bishopMove(type, 8, Index, -9, arrTd, color),
-  //   bishopMove(type, 8, Index, -7, arrTd, color)
-  // );
+
   const res = {
     pawn: {
       normalMove: {
@@ -74,10 +75,10 @@ export const posibleMovementsObj = (pawnType, arrTd, gameState) => {
     },
     knight: {
       normalMove: {
-        obliqueLeftFoward: [6, 15],
-        obliqueRightFoward: [8, 17],
-        obliqueLeftBackWard: [-6, -15],
-        obliqueRightBackWard: [-8, -17],
+        obliqueLeftFoward: knightMove(type, Index, [10, 17], arrTd, color),
+        obliqueRightFoward: knightMove(type, Index, [6, 15], arrTd, color),
+        obliqueLeftBackWard: knightMove(type, Index, [-6, -15], arrTd, color),
+        obliqueRightBackWard: knightMove(type, Index, [-10, -17], arrTd, color),
         left: undefined,
         right: undefined,
         foward: undefined,
@@ -124,10 +125,10 @@ export const posibleMovementsObj = (pawnType, arrTd, gameState) => {
         obliqueRightFoward: bishopMove(type, Row, Index, -7, arrTd, color),
         obliqueLeftBackWard: bishopMove(type, Row, Index, -9, arrTd, color),
         obliqueRightBackWard: bishopMove(type, Row, Index, 7, arrTd, color),
-        left: makeArray(8, (i) => -i),
-        right: makeArray(8, (i) => i),
-        foward: makeArray(8, (i) => i * 8),
-        backward: makeArray(8, (i) => -i * 8),
+        left: rookMove(type, 8, Index, -1, arrTd, color),
+        right: rookMove(type, 8, Index, 1, arrTd, color),
+        foward: rookMove(type, 8, Index, 8, arrTd, color),
+        backward: rookMove(type, 8, Index, -8, arrTd, color),
       },
 
       eatMove: {
@@ -143,14 +144,14 @@ export const posibleMovementsObj = (pawnType, arrTd, gameState) => {
     },
     king: {
       normalMove: {
-        obliqueLeftFoward: [-9],
-        obliqueRightFoward: [-7],
-        obliqueLeftBackWard: [9],
-        obliqueRightBackWard: [7],
-        left: [-1],
-        right: [1],
-        foward: [8],
-        backward: [-8],
+        obliqueLeftFoward: kingMove(type, Index, [-9], arrTd, color),
+        obliqueRightFoward: kingMove(type, Index, [-7], arrTd, color),
+        obliqueLeftBackWard: kingMove(type, Index, [9], arrTd, color),
+        obliqueRightBackWard: kingMove(type, Index, [7], arrTd, color),
+        left: kingMove(type, Index, [-1], arrTd, color),
+        right: kingMove(type, Index, [1], arrTd, color),
+        foward: kingMove(type, Index, [8], arrTd, color),
+        backward: kingMove(type, Index, [-8], arrTd, color),
       },
 
       eatMove: {
