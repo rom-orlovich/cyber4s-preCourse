@@ -1,0 +1,125 @@
+body {
+  height: 100vh;
+  width: 100vw;
+  position: relative;
+}
+
+#container_game {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+#container_ChessBoard {
+  width: 100vh;
+  height: 100vh;
+  background-color: rgba(188, 188, 193);
+}
+
+table {
+  border: 1px solid black;
+  width: 90%;
+  height: 90%;
+  border-collapse: collapse;
+}
+
+img {
+  height: 100%;
+  width: 100%;
+  z-index: 2;
+  cursor: pointer;
+}
+table,
+td {
+  border: 1.2px solid rgba(28, 27, 27, 1);
+  position: relative;
+}
+
+td {
+  position: relative;
+  text-align: center;
+  height: 50px;
+  width: 50px;
+}
+/* black square  */
+table tr:nth-child(odd) td:nth-child(even),
+table tr:nth-child(even) td:nth-child(odd) {
+  background-color: rgba(27, 27, 27, 0.7);
+  border: 0.5px solid rgba(27, 27, 27, 1);
+}
+
+/* white square 
+table tr:nth-child(2n) td:nth-child(2n + 1),
+table tr:nth-child(2n + 1) td:nth-child(2n) {
+  border: 1px solid rgba(27, 27, 27, 0.5);
+} */
+
+/* buttons controls*/
+#buttons_control {
+  text-align: center;
+  position: absolute;
+  top: 20%;
+  right: 5%;
+  width: 15rem;
+  height: 10rem;
+}
+#buttons_control h1 {
+  font-weight: 600;
+}
+button {
+  font-weight: 600;
+  font-size: 1rem;
+  box-shadow: 0 2px 2px 2px rgba(27, 27, 27, 0.05);
+}
+button:hover {
+  transform: scale(1.3);
+  opacity: 0.8;
+  transition: 1s transform;
+}
+.button-white {
+  background-color: white;
+}
+.button-black {
+  background-color: rgb(17, 16, 16);
+  color: white;
+}
+.button-white:hover {
+  transform: scale(1.3);
+  opacity: 0.9;
+  transition: 1s transform;
+}
+/*pawn active*/
+
+/* .rotate0Img {
+  transform: rotate(0deg) translate(-50%, -50%);
+} */
+.rotate180Img {
+  transform: translate(-50%, -50%) rotate(180deg);
+}
+.rotate0Img {
+  transform: translate(-50%, -50%) rotate(0deg);
+}
+
+.rotate180 {
+  transform: rotate(180deg);
+  /* transition: transform 1s; */
+}
+.rotate0 {
+  transform: rotate(0deg);
+  /* transition: transform 1s; */
+}
+/* @keyframes rotate {
+  0% {
+  }
+  50% {
+  }
+
+  100% {
+  }
+} */
+.active {
+  background-color: #2e2eb561 !important;
+}
+.unActive {
+  background-color: inherit;
+}
