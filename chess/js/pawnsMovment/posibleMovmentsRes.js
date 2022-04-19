@@ -1,108 +1,27 @@
-import { makeArray } from "./Helpers/utilitesFun.js";
+import { makeArray } from "../Helpers/utilitesFun.js";
+import { bishopMove, pawnMove, rookMove } from "./pawnDirMovments.js";
 import {
   cheakBoardDir,
   checkIligalePos,
   checkNumMovesOfPawn,
-  getDataFromDataSet,
-  getNextPileChild,
-  movePawnToOtherPile,
-} from "./Helpers/pawnMovementHelpers.js";
-
-const obliquePossibleMovment = (change, curIndex, arr, color) => {
-  const newIndex = checkIligalePos(curIndex + change, curIndex, arr);
-  const [row, coulmn] = arr[curIndex]?.dataset.indexPos.split(",");
-  const [rowNext, coulmnNext] = arr[newIndex]?.dataset.indexPos.split(",");
-
-  if (Math.abs(rowNext - row) !== Math.abs(coulmnNext - coulmn)) {
-    return 0;
-  }
-  const firstChildEl = getNextPileChild(newIndex, curIndex, arr);
-  if (firstChildEl && firstChildEl.dataset.typePawn?.split("-")[3] === color)
-    return 0;
-  return change;
-};
-
-const verticalPossibleMovment = (change, curIndex, arr, color) => {
-  const newIndex = checkIligalePos(curIndex + change, curIndex, arr);
-  const [row, column] = arr[curIndex]?.dataset.indexPos.split(",");
-  const [rowNext, columnNext] = arr[newIndex]?.dataset.indexPos.split(",");
-
-  if (
-    !(
-      (rowNext !== row && column === columnNext) ||
-      (rowNext === row && column !== columnNext)
-    )
-  ) {
-    return 0;
-  }
-  const firstChildEl = getNextPileChild(newIndex, curIndex, arr);
-  if (firstChildEl && firstChildEl.dataset.typePawn?.split("-")[3] === color)
-    return 0;
-
-  return change;
-};
-
-const breakLoop = (change, curIndex, arrTd, color) => {
-  const newPos = change + curIndex;
-  const nextPileChild = getNextPileChild(newPos, curIndex, arrTd);
-  if (!nextPileChild) return;
-  const getColorDataSet = getDataFromDataSet(nextPileChild, 3);
-  return getColorDataSet !== color || getColorDataSet === color;
-};
-
-const bishopMove = (type, lengthLoop, curIndex, change, arrTd, color) => {
-  const nextPileChild = getNextPileChild(curIndex + change, curIndex, arrTd);
-  const getColorDataSet = getDataFromDataSet(nextPileChild, 3);
-  return getColorDataSet === color || type !== "bishop"
-    ? []
-    : makeArray(
-        lengthLoop,
-        (i) => obliquePossibleMovment(i * change, curIndex, arrTd, color),
-        (i) => breakLoop(i * change, curIndex, arrTd, color)
-      );
-};
-
-const rookMove = (type, lengthLoop, curIndex, change, arrTd, color) => {
-  const nextPileChild = getNextPileChild(curIndex + change, curIndex, arrTd);
-  const getColorDataSet = getDataFromDataSet(nextPileChild, 3);
-
-  return getColorDataSet === color || type !== "rook"
-    ? []
-    : makeArray(
-        lengthLoop,
-        (i) => verticalPossibleMovment(i * change, curIndex, arrTd, color),
-        (i) => breakLoop(i * change, curIndex, arrTd, color)
-      );
-};
-
-//add the options to move twice in the first turn
-const pawnMove = (type, curIndex, change, arrTd, boardDir, color) => {
-  const changeDir = cheakBoardDir(boardDir, color, change);
-
-  const nextPileChild = getNextPileChild(
-    curIndex + changeDir[0],
-    curIndex,
-    arrTd
-  );
-  const colorDataSet = getDataFromDataSet(nextPileChild, 3);
-  return colorDataSet === color && type !== "pawn" ? [] : changeDir;
-};
+} from "./pawnMovementHelpers.js";
 
 export const posibleMovementsObj = (pawnType, arrTd, gameState) => {
   const pawnTypeArr = pawnType.split("-");
   const [index, type, number, color] = pawnTypeArr;
 
-  let numMovesPawn =
-    type === "pawn" ? checkNumMovesOfPawn(pawnTypeArr[4]) : [0];
-
   const { boardDir, playerTurns, points, eatenPawns } = gameState;
-
   const Index = index * 1;
-  // console.log(rookMove(8, Index, -8, arrTd, color));
-
   const [row, column] = arrTd[Index]?.dataset.indexPos.split(",");
   const Row = row * 1;
-
+  let numMovesPawn =
+    type === "pawn" ? checkNumMovesOfPawn(pawnTypeArr[4]) : [0];
+  // console.log(
+  //   "posibleMovementsObj",
+  //   "bishopMove",
+  //   bishopMove(type, 8, Index, -9, arrTd, color),
+  //   bishopMove(type, 8, Index, -7, arrTd, color)
+  // );
   const res = {
     pawn: {
       normalMove: {
@@ -117,8 +36,10 @@ export const posibleMovementsObj = (pawnType, arrTd, gameState) => {
       },
 
       eatMove: {
-        obliqueLeftFoward: pawnMove(type, Index, [7], arrTd, boardDir, color),
-        obliqueRightFoward: pawnMove(type, Index, [9], arrTd, boardDir, color),
+        obliqueLeftFoward: [],
+        // pawnMove(type, Index, [7], arrTd, boardDir, color),
+        obliqueRightFoward: [],
+        // pawnMove(type, Index, [9], arrTd, boardDir, color),
         obliqueLeftBackWard: undefined,
         obliqueRightBackWard: undefined,
         left: undefined,

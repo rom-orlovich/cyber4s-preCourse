@@ -1,4 +1,4 @@
-import { selectElement, editDataSet } from "./utilitesFun.js";
+import { selectElement, editDataSet } from "../Helpers/utilitesFun.js";
 //when the boardDir change and the board is rotate the index of cell are not changing
 //therefore the change calcualtion of the regular pawns it doesn't change
 
@@ -37,7 +37,6 @@ export const checkIligalePos = (newIndex, curIndex, arr) => {
   let length = arr.length - 1;
   let NewIndex = newIndex * 1;
   return NewIndex > length || NewIndex < 0 ? curIndex : NewIndex;
-  // return Index > length ? length : Index < 0 ? 0 : Index;
 };
 
 export const getNextPileChild = (index, curIndex, arr) =>
@@ -49,21 +48,26 @@ export const checkTheBoarderOfPile = (curIndex, change, color, arr) => {
 };
 export const checkNumMovesOfPawn = (numMoves) => {
   const NumMoves = numMoves * 1;
-
   return NumMoves === 0 ? [8, 16] : [8];
 };
 
-export const movePawnToOtherPile = (queryPos, newPos) => {
-  const choosenImg = selectElement(`img[data-type-pawn*="${queryPos}"]`);
+export const movePawnToOtherPile = (queryPos, newPos, type) => {
+  const choosenImg = selectElement(
+    `img[data-type-pawn*="${queryPos}-${type}"]`
+  );
+
   const choosenTD = selectElement(`td[data-index-pos*="${newPos}"]`);
   if (!(choosenImg && choosenTD)) return;
+  console.log(
+    "movePawnToOtherPile",
+    "choosenImg",
+    choosenImg,
+    "choosenTD",
+    choosenTD
+  );
   const dataSetImg = choosenImg.dataset.typePawn;
   const indexPile = choosenTD.dataset.indexPile;
+
   choosenImg.dataset.typePawn = editDataSet(dataSetImg, 0, indexPile);
-  choosenImg.parentNode?.removeChild(choosenImg);
-  return (
-    !choosenTD.firstElementChild &&
-    choosenTD.appendChild(choosenImg) &&
-    choosenTD.classList.remove("active")
-  );
+  !choosenTD.firstElementChild && choosenTD.appendChild(choosenImg);
 };

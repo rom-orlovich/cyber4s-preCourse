@@ -27,4 +27,4 @@ const changeDirOfBoard = (color) => {
 
 // ButtonControlInit(changeDirOfBoard);
 
-gameEvents.initAddEvent(chess.tdBoardChess, gameManageState, changeDirOfBoard);
+gameEvents.initEvents(chess.tdBoardChess, gameManageState, changeDirOfBoard);

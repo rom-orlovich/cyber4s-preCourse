@@ -9,7 +9,7 @@ import {
   genrateObjKeyValueToArr,
   toLog,
 } from "./Helpers/utilitesFun.js";
-import { posibleMovementsObj } from "./posibleMovments.js";
+import { posibleMovementsObj } from "./pawnsMovment/posibleMovmentsRes.js";
 
 export class GameEvents {
   dataTd;
@@ -25,22 +25,23 @@ export class GameEvents {
     this.setState = setState;
   }
 
-  setPlayerTrun(color) {
+  setPlayerTurn(color) {
     if (color === "white") this.gameState.playerTurns[0]++;
     else this.gameState.playerTurns[1]++;
     this.setState(this.gameState);
   }
 
-  initAddEvent(dataTd, gameManageState, changeDirFun = () => {}) {
+  initEvents(dataTd, gameManageState, changeDirFun = () => {}) {
     this.initChessBoardControl(dataTd, gameManageState);
     addEventListenerByQuery(
       "click",
       (e) => {
         const dataSetInfo = e.target.dataset.typePawn;
         if (!dataSetInfo) return;
+
         const handleAfterClick = (color) => {
           changeDirFun(color === "white" ? "black" : "white");
-          this.setPlayerTrun(color);
+          this.setPlayerTurn(color);
         };
         this.handlerClickMovement(dataSetInfo, this.dataTd, handleAfterClick);
       },
@@ -89,7 +90,7 @@ export class GameEvents {
       this.gameState
     );
     let allMovement = genrateObjKeyValueToArr(normalMove);
-    console.log(dataSetInfo);
+
     handleClickPawn(dataSetInfo, allMovement, arrTD, handleAfterClick);
   }
 }
