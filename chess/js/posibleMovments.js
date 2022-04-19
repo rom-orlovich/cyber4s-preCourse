@@ -1,6 +1,6 @@
 import { makeArray } from "./Helpers/utilitesFun.js";
 import {
-  checkDir,
+  cheakBoardDir,
   checkIligalePos,
   checkNumMovesOfPawn,
   getDataFromDataSet,
@@ -77,7 +77,7 @@ const rookMove = (type, lengthLoop, curIndex, change, arrTd, color) => {
 
 //add the options to move twice in the first turn
 const pawnMove = (type, curIndex, change, arrTd, boardDir, color) => {
-  const changeDir = checkDir(boardDir, color, change);
+  const changeDir = cheakBoardDir(boardDir, color, change);
 
   const nextPileChild = getNextPileChild(
     curIndex + changeDir[0],
@@ -85,7 +85,6 @@ const pawnMove = (type, curIndex, change, arrTd, boardDir, color) => {
     arrTd
   );
   const colorDataSet = getDataFromDataSet(nextPileChild, 3);
-
   return colorDataSet === color && type !== "pawn" ? [] : changeDir;
 };
 
@@ -103,6 +102,7 @@ export const posibleMovementsObj = (pawnType, arrTd, gameState) => {
 
   const [row, column] = arrTd[Index]?.dataset.indexPos.split(",");
   const Row = row * 1;
+
   const res = {
     pawn: {
       normalMove: {

@@ -1,7 +1,27 @@
 import { selectElement, editDataSet } from "./utilitesFun.js";
 //when the boardDir change and the board is rotate the index of cell are not changing
 //therefore the change calcualtion of the regular pawns it doesn't change
-export const checkDir = (boardDir, color, changes) => {
+
+export const getDataFromDataSet = (
+  el,
+  pos,
+  datasetName = "typePawn",
+  split = "-"
+) => el && el.dataset?.[datasetName]?.split(split)[pos];
+
+export const editDatasSetByQuery = (
+  queryPos,
+  posInStrArr,
+  newstr,
+  datasetName = "typePawn"
+) => {
+  const el = selectElement(`img[data-type-pawn*="${queryPos}"]`);
+  const dataSetImg = el?.dataset[datasetName];
+  if (!el) return;
+  el.dataset[datasetName] = editDataSet(dataSetImg, posInStrArr, newstr);
+};
+
+export const cheakBoardDir = (boardDir, color, changes) => {
   return changes?.map((el) => {
     return (boardDir === 1 && color === "white") ||
       (boardDir === 2 && color === "white")
@@ -20,13 +40,6 @@ export const checkIligalePos = (newIndex, curIndex, arr) => {
   // return Index > length ? length : Index < 0 ? 0 : Index;
 };
 
-export const getDataFromDataSet = (
-  el,
-  pos,
-  datasetName = "typePawn",
-  split = "-"
-) => el && el.dataset?.[datasetName]?.split(split)[pos];
-
 export const getNextPileChild = (index, curIndex, arr) =>
   arr[checkIligalePos(index, curIndex, arr)]?.firstElementChild;
 
@@ -40,19 +53,6 @@ export const checkNumMovesOfPawn = (numMoves) => {
   return NumMoves === 0 ? [8, 16] : [8];
 };
 
-export const editDatasSetByQuery = (
-  queryPos,
-  posInStrArr,
-  newstr,
-  datasetName = "typePawn"
-) => {
-  const el = selectElement(`img[data-type-pawn*="${queryPos}"]`);
-
-  const dataSetImg = el?.dataset[datasetName];
-
-  if (!el) return;
-  el.dataset[datasetName] = editDataSet(dataSetImg, posInStrArr, newstr);
-};
 export const movePawnToOtherPile = (queryPos, newPos) => {
   const choosenImg = selectElement(`img[data-type-pawn*="${queryPos}"]`);
   const choosenTD = selectElement(`td[data-index-pos*="${newPos}"]`);

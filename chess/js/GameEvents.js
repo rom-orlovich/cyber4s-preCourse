@@ -9,7 +9,7 @@ import {
   genrateObjKeyValueToArr,
   toLog,
 } from "./Helpers/utilitesFun.js";
-import { posibleMovementsObj } from "./pawnsMovement.js";
+import { posibleMovementsObj } from "./posibleMovments.js";
 
 export class GameEvents {
   dataTd;
