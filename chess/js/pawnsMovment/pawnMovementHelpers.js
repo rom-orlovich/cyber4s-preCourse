@@ -60,21 +60,18 @@ export const movePawnToOtherPile = (queryPos, newPos, pawnType, arr) => {
   const choosenTD = selectElement(`td[data-index-pos*="${newPos}"]`);
 
   if (!(choosenImg && choosenTD)) return;
-
+  if (choosenImg.parentNode === choosenTD) return;
   const dataSetImg = choosenImg.dataset.typePawn;
   const indexPile = choosenTD.dataset.indexPile;
-
   choosenImg.dataset.typePawn = editDataSet(dataSetImg, 0, indexPile);
   const img = choosenTD.firstElementChild;
 
   if (!img) choosenTD.appendChild(choosenImg);
   else {
-    let [index1, type1, number1, color1] = img.dataset.typePawn.split("-");
-    if (color1 === color) return false;
-    choosenTD.removeChild(img);
+    let color1 = getDataFromDataSet(img, 3);
+    if (color1 !== color) choosenTD.removeChild(img);
     choosenTD.appendChild(choosenImg);
   }
-  arr.forEach((el) => {
-    el.classList.remove("active");
-  });
+
+  return true;
 };

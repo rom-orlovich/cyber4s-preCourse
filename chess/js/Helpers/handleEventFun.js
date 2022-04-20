@@ -32,24 +32,19 @@ export const handleClickPawn = (
   const curIndex = index * 1;
   posibleMoves.forEach((el) => {
     const newIndex = checkIligalePos(curIndex + el, curIndex, arrTD);
-    const handler = (e) => {
+    arrTD[newIndex].addEventListener("click", (e) => {
       const target = e.target.closest("td");
       const indexPosTDClick = target?.dataset?.indexPos;
-
       if (!target) return;
-
       let bool = movePawnToOtherPile(
         curIndex,
         indexPosTDClick,
         pawnType,
         arrTD
       );
-      console.log(bool);
+      if (!bool) return;
       if (type === "pawn") editDatasSetByQuery(newIndex, 4, "1");
-      handleAfterClick(color, bool);
-
-      // arrTD[newIndex].removeEventListener("click", handler);
-    };
-    arrTD[newIndex].addEventListener("click", handler);
+      handleAfterClick(color);
+    });
   });
 };

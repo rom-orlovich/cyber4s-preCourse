@@ -4,9 +4,21 @@ import { GameEvents } from "./GameEvents.js";
 
 import { ChessBoard } from "./ChessBoard.js";
 import { state } from "./State.js";
+import { selectElement } from "./Helpers/utilitesFun.js";
 const gameState = {
   boardDir: 1,
   playerTurns: [0, 0],
+  activePlayer: "white",
+  kingState: {
+    white: {
+      pos: 60,
+      threat: [],
+    },
+    black: {
+      pos: 4,
+      threat: [],
+    },
+  },
   points: [0, 0],
   eatenPawns: {
     player1: [],
@@ -15,6 +27,7 @@ const gameState = {
 };
 
 const stateM = new state();
+
 const gameManageState = stateM.useState(gameState);
 
 const chess = new ChessBoard();
@@ -24,6 +37,8 @@ const changeDirOfBoard = (color) => {
   chess.changeDirBoard(color, gameManageState);
   chess.render(false);
 };
+
+const table = selectElement("table");
 
 // ButtonControlInit(changeDirOfBoard);
 

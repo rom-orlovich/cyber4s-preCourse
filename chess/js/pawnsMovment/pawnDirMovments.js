@@ -4,6 +4,7 @@ import {
   getNextPileChild,
   getDataFromDataSet,
   checkIligalePos,
+  checkNumMovesOfPawn,
 } from "./pawnMovementHelpers.js";
 
 export const breakLoop = (change, curIndex, arrTd, color) => {
@@ -21,6 +22,7 @@ const obliquePossibleMovment = (change, curIndex, arr, color) => {
   if (Math.abs(rowNext - row) !== Math.abs(coulmnNext - coulmn)) {
     return 0;
   }
+
   const firstChildEl = getNextPileChild(newIndex, curIndex, arr);
   if (firstChildEl && firstChildEl.dataset.typePawn?.split("-")[3] === color)
     return 0;
@@ -81,15 +83,15 @@ export const rookMove = (type, lengthLoop, curIndex, change, arrTd, color) => {
 };
 
 export const pawnMove = (
-  type,
+  pawnType,
   curIndex = curIndex * 1,
-  changes,
   arrTd,
   boardDir,
   color
 ) => {
-  if (type !== "pawn") return [];
-  let arrChanges = cheakBoardDir(boardDir, color, [7, 9, ...changes]);
+  if (pawnType.type !== "pawn") return [];
+  let numMovesPawn = checkNumMovesOfPawn(pawnType.pawnMoves);
+  let arrChanges = cheakBoardDir(boardDir, color, [7, 9, ...numMovesPawn]);
   const arr = arrChanges.map((change) => {
     const newIndex = checkIligalePos(curIndex + change, curIndex, arrTd);
     const checkOblique =
@@ -135,7 +137,7 @@ export const knightMove = (type, curIndex, changes, arrTd, color) => {
   });
 };
 
-export const kingMove = (type, curIndex, changes, arrTd, color) => {
+export const kingMove = (type, curIndex, changes, arrTd, color, kingState) => {
   const nextPileChild = getNextPileChild(
     curIndex + changes[0],
     curIndex,

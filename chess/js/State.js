@@ -1,10 +1,23 @@
 export class state {
-  _state;
+  state;
+
   setState(state) {
-    this.state = state;
+    let obj = {};
+    for (const key in state) {
+      obj = {
+        ...this.state,
+        [key]: state[key],
+      };
+    }
+    this.state = obj;
+  }
+
+  getState() {
+    return this.state;
   }
 
   useState(state) {
-    return [state, this.setState.bind(this)];
+    this.state = state;
+    return [this.getState.bind(this), this.setState.bind(this)];
   }
 }

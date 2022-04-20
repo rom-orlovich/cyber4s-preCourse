@@ -4,6 +4,8 @@ import {
   checkColor,
   checkPawnType,
 } from "./Helpers/ChessBoardHelpers.js";
+let num = 1,
+  num2 = 2;
 
 export class ChessBoard {
   parentEl = document.querySelector("#container_ChessBoard");
@@ -11,6 +13,7 @@ export class ChessBoard {
   curTable;
   tdBoardChess;
   boardDir = 1;
+
   chessPawnSetUp = {
     0: this.setOtherPawns,
     1: this.setPawns,
@@ -47,7 +50,6 @@ export class ChessBoard {
             td,
             coulmn,
             indexPile,
-
             checkColor(row, "white", "black")
           );
         tr.appendChild(td);
