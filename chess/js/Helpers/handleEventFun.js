@@ -30,6 +30,7 @@ export const handleClickPawn = (
 ) => {
   let [index, type, number, color] = pawnType.split("-");
   const curIndex = index * 1;
+
   posibleMoves.forEach((el) => {
     const newIndex = checkIligalePos(curIndex + el, curIndex, arrTD);
     arrTD[newIndex].addEventListener("click", (e) => {

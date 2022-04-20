@@ -1,4 +1,8 @@
-import { makeArray } from "../Helpers/utilitesFun.js";
+import {
+  editDataSet,
+  makeArray,
+  selectElement,
+} from "../Helpers/utilitesFun.js";
 import {
   cheakBoardDir,
   getNextPileChild,
@@ -102,11 +106,20 @@ export const pawnMove = (
     const td = arrTd[newIndex];
     if (!td) return 0;
     const img = td?.firstElementChild;
-    if (!img && !checkOblique) return change;
 
-    if (img && getDataFromDataSet(img, 3) !== color && checkOblique)
+    if (
+      !img &&
+      !checkOblique &&
+      (!arrTd[curIndex + 8].firstElementChild ||
+        !arrTd[curIndex - 8].firstElementChild)
+    )
       return change;
-    if (img && getDataFromDataSet(img, 3) === color) return 0;
+    if (img) {
+      const colorDataSet = getDataFromDataSet(img, 3);
+      if (colorDataSet !== color && checkOblique) return change;
+
+      if (colorDataSet === color) return 0;
+    }
     return 0;
   });
   return arr;
@@ -137,7 +150,13 @@ export const knightMove = (type, curIndex, changes, arrTd, color) => {
   });
 };
 
-export const kingMove = (type, curIndex, changes, arrTd, color, kingState) => {
+export const kingMove = (typePawn, changes, arrTd, kingState) => {
+  const [index, type, _, color] = typePawn;
+  if (type !== "king") return [];
+
+  const kingType = kingState[color];
+
+  const curIndex = index * 1;
   const nextPileChild = getNextPileChild(
     curIndex + changes[0],
     curIndex,
@@ -145,6 +164,6 @@ export const kingMove = (type, curIndex, changes, arrTd, color, kingState) => {
   );
 
   const colorDataSet = getDataFromDataSet(nextPileChild, 3);
-
-  return colorDataSet === color || type !== "king" ? [] : [changes[0]];
+  if (colorDataSet === color) return [];
+  return [changes[0]];
 };

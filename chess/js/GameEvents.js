@@ -36,10 +36,13 @@ export class GameEvents {
       this.gameState.playerTurns[1]++;
     }
     this.setState(this.gameState);
-    console.log(this.gameState);
   }
   initEvents(dataTd, gameManageState, changeDirFun = () => {}) {
     this.initChessBoardControl(dataTd, gameManageState);
+
+    // window.addEventListener("onkeydown",()=>{
+
+    // })
     addEventListenerByQuery(
       "click",
       (e) => {
@@ -87,23 +90,20 @@ export class GameEvents {
   }
 
   handleMouseOver(dataSetInfo, arrTD, addEvent = true) {
-    let { normalMove, eatMove } = posibleMovementsObj(
+    let possibleMoves = posibleMovementsObj(
       dataSetInfo,
       this.dataTd,
       this.gameState
     );
 
-    let allMovement = genrateObjKeyValueToArr(normalMove);
-    handlePosibleMovment(dataSetInfo, allMovement, arrTD, addEvent);
+    // let allMovement = genrateObjKeyValueToArr(normalMove);
+    handlePosibleMovment(dataSetInfo, possibleMoves, arrTD, addEvent);
   }
 
   handlerClickMovement(dataSetInfo, arrTD, handleAfterClick) {
-    let { normalMove, eatMove } = posibleMovementsObj(
-      dataSetInfo,
-      arrTD,
-      this.gameState
-    );
-    let allMovement = genrateObjKeyValueToArr(normalMove);
-    handleClickPawn(dataSetInfo, allMovement, arrTD, handleAfterClick);
+    let possibleMoves = posibleMovementsObj(dataSetInfo, arrTD, this.gameState);
+    console.log();
+    // let allMovement = genrateObjKeyValueToArr(normalMove);
+    handleClickPawn(dataSetInfo, possibleMoves, arrTD, handleAfterClick);
   }
 }

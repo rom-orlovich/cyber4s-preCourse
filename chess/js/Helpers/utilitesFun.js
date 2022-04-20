@@ -40,7 +40,8 @@ export const addEventListenerByQueryAll = (nameEvent, handler, query) => {
 export const makeArray = (
   num,
   handler = undefined,
-  breakFun = (i) => false
+  breakFun = (i) => false,
+  unique = true
 ) => {
   const arr = [];
   for (let i = 1; i < num; i++) {
@@ -49,7 +50,7 @@ export const makeArray = (
     if (breakRes) break;
   }
 
-  return makeArrayToSet(arr);
+  return unique ? makeArrayToSet(arr) : arr;
 };
 
 export const getObjKeyWithValue = (obj) => {
