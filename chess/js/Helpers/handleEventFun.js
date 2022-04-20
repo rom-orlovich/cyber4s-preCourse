@@ -38,11 +38,17 @@ export const handleClickPawn = (
 
       if (!target) return;
 
-      let bool = movePawnToOtherPile(curIndex, indexPosTDClick, pawnType);
-
+      let bool = movePawnToOtherPile(
+        curIndex,
+        indexPosTDClick,
+        pawnType,
+        arrTD
+      );
+      console.log(bool);
       if (type === "pawn") editDatasSetByQuery(newIndex, 4, "1");
       handleAfterClick(color, bool);
-      arrTD[newIndex].removeEventListener("click", handler);
+
+      // arrTD[newIndex].removeEventListener("click", handler);
     };
     arrTD[newIndex].addEventListener("click", handler);
   });

@@ -40,8 +40,9 @@ export class GameEvents {
         if (!dataSetInfo) return;
 
         const handleAfterClick = (color, bool = true) => {
-          changeDirFun(color === "white" ? "black" : "white");
-          bool && this.setPlayerTurn(color);
+          console.log(bool);
+          bool && changeDirFun(color === "white" ? "black" : "white");
+          this.setPlayerTurn(color);
         };
         this.handlerClickMovement(dataSetInfo, this.dataTd, handleAfterClick);
       },

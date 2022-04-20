@@ -51,7 +51,7 @@ export const checkNumMovesOfPawn = (numMoves) => {
   return NumMoves === 0 ? [8, 16] : [8];
 };
 
-export const movePawnToOtherPile = (queryPos, newPos, pawnType, fun) => {
+export const movePawnToOtherPile = (queryPos, newPos, pawnType, arr) => {
   let [index, type, number, color] = pawnType.split("-");
   const choosenImg = selectElement(
     `img[data-type-pawn*="${queryPos}-${type}-${number}-${color}"]`
@@ -67,12 +67,14 @@ export const movePawnToOtherPile = (queryPos, newPos, pawnType, fun) => {
   choosenImg.dataset.typePawn = editDataSet(dataSetImg, 0, indexPile);
   const img = choosenTD.firstElementChild;
 
-  if (!img) return choosenTD.appendChild(choosenImg) && true;
+  if (!img) choosenTD.appendChild(choosenImg);
   else {
     let [index1, type1, number1, color1] = img.dataset.typePawn.split("-");
     if (color1 === color) return false;
-    choosenTD.mouseover = null;
     choosenTD.removeChild(img);
-    return choosenTD.appendChild(choosenImg) && true;
+    choosenTD.appendChild(choosenImg);
   }
+  arr.forEach((el) => {
+    el.classList.remove("active");
+  });
 };
