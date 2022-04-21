@@ -19,23 +19,25 @@ export const breakLoop = (change, curIndex, arrTd, color) => {
   return getColorDataSet !== color || getColorDataSet === color;
 };
 const obliquePossibleMovment = (change, curIndex, arr, color) => {
-  const newIndex = checkIligalePos(curIndex + change, curIndex, arr);
-  const [row, coulmn] = arr[curIndex]?.dataset.indexPos.split(",");
+  const CurIndex = curIndex * 1;
+  const newIndex = checkIligalePos(CurIndex + change, CurIndex, arr);
+  const [row, coulmn] = arr[CurIndex]?.dataset.indexPos.split(",");
   const [rowNext, coulmnNext] = arr[newIndex]?.dataset.indexPos.split(",");
 
   if (Math.abs(rowNext - row) !== Math.abs(coulmnNext - coulmn)) {
-    return 0;
+    return CurIndex;
   }
 
   const firstChildEl = getNextPileChild(newIndex, curIndex, arr);
   if (firstChildEl && firstChildEl.dataset.typePawn?.split("-")[3] === color)
-    return 0;
-  return change;
+    return CurIndex;
+  return newIndex;
 };
 
 const verticalPossibleMovment = (change, curIndex, arr, color) => {
-  const newIndex = checkIligalePos(curIndex + change, curIndex, arr);
-  const [row, column] = arr[curIndex]?.dataset.indexPos.split(",");
+  const CurIndex = curIndex * 1;
+  const newIndex = checkIligalePos(CurIndex + change, CurIndex, arr);
+  const [row, column] = arr[CurIndex]?.dataset.indexPos.split(",");
   const [rowNext, columnNext] = arr[newIndex]?.dataset.indexPos.split(",");
   if (
     !(
@@ -43,13 +45,13 @@ const verticalPossibleMovment = (change, curIndex, arr, color) => {
       (rowNext === row && column !== columnNext)
     )
   ) {
-    return 0;
+    return CurIndex;
   }
-  const firstChildEl = getNextPileChild(newIndex, curIndex, arr);
+  const firstChildEl = getNextPileChild(newIndex, CurIndex, arr);
   if (firstChildEl && firstChildEl.dataset.typePawn?.split("-")[3] === color)
-    return 0;
+    return CurIndex;
 
-  return change;
+  return newIndex;
 };
 
 export const bishopMove = (
@@ -104,7 +106,7 @@ export const pawnMove = (
       newIndex - 9 === curIndex ||
       newIndex + 9 === curIndex;
     const td = arrTd[newIndex];
-    if (!td) return 0;
+    if (!td) return curIndex;
     const img = td?.firstElementChild;
 
     if (
@@ -113,14 +115,14 @@ export const pawnMove = (
       (!arrTd[curIndex + 8].firstElementChild ||
         !arrTd[curIndex - 8].firstElementChild)
     )
-      return change;
+      return newIndex;
     if (img) {
       const colorDataSet = getDataFromDataSet(img, 3);
-      if (colorDataSet !== color && checkOblique) return change;
+      if (colorDataSet !== color && checkOblique) return newIndex;
 
-      if (colorDataSet === color) return 0;
+      if (colorDataSet === color) return curIndex;
     }
-    return 0;
+    return curIndex;
   });
   return arr;
 };
@@ -139,31 +141,28 @@ const checKnightMove = (curIndex, newIndex, arr) => {
 export const knightMove = (type, curIndex, changes, arrTd, color) => {
   if (type !== "knight") return [];
   return changes.map((change) => {
-    const newIndex = checkIligalePos(curIndex + change, curIndex, arrTd);
+    const CurIndex = curIndex * 1;
+    const newIndex = checkIligalePos(CurIndex + change, CurIndex, arrTd);
     const checkNextPileChild = checKnightMove(curIndex, newIndex, arrTd);
-    if (!checkNextPileChild) return 0;
+    if (!checkNextPileChild) return CurIndex;
     const img = checkNextPileChild.firstElementChild;
-    if (!img) return change;
+    if (!img) return newIndex;
     const colorDataSet = getDataFromDataSet(img, 3);
-    if (colorDataSet !== color) return change;
-    else return 0;
+    if (colorDataSet !== color) return newIndex;
+    else return CurIndex;
   });
 };
 
 export const kingMove = (typePawn, changes, arrTd, kingState) => {
   const [index, type, _, color] = typePawn;
   if (type !== "king") return [];
-
+  const curIndex = index * 1;
+  const newIndex = checkIligalePos(curIndex + changes[0], curIndex, arrTd);
   const kingType = kingState[color];
 
-  const curIndex = index * 1;
-  const nextPileChild = getNextPileChild(
-    curIndex + changes[0],
-    curIndex,
-    arrTd
-  );
+  const nextPileChild = getNextPileChild(newIndex, curIndex, arrTd);
 
   const colorDataSet = getDataFromDataSet(nextPileChild, 3);
   if (colorDataSet === color) return [];
-  return [changes[0]];
+  return [newIndex];
 };

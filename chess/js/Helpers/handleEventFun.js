@@ -14,11 +14,11 @@ export const handlePosibleMovment = (
   const [index, type, number, color] = pawnType.split("-");
 
   arrMovement.forEach((change) => {
-    const Index = index * 1;
-    const newPos = checkIligalePos(Index + change, Index, arrTD);
+    // const Index = index * 1;
+    // const newPos = checkIligalePos(Index + change, Index, arrTD);
     addEvent
-      ? arrTD[newPos].classList.add("active")
-      : arrTD[newPos].classList.remove("active");
+      ? arrTD[change].classList.add("active")
+      : arrTD[change].classList.remove("active");
   });
 };
 
@@ -28,23 +28,24 @@ export const handleClickPawn = (
   arrTD,
   handleAfterClick
 ) => {
-  let [index, type, number, color] = pawnType.split("-");
-  const curIndex = index * 1;
+  let [CurIndex, type, _, color] = pawnType.split("-");
+  // const curIndex = index * 1;
 
   posibleMoves.forEach((el) => {
-    const newIndex = checkIligalePos(curIndex + el, curIndex, arrTD);
-    arrTD[newIndex].addEventListener("click", (e) => {
+    // const newIndex = checkIligalePos(curIndex + el, curIndex, arrTD);
+    arrTD[el].addEventListener("click", (e) => {
+      console.log(el);
       const target = e.target.closest("td");
       const indexPosTDClick = target?.dataset?.indexPos;
       if (!target) return;
       let bool = movePawnToOtherPile(
-        curIndex,
+        CurIndex * 1,
         indexPosTDClick,
         pawnType,
         arrTD
       );
       if (!bool) return;
-      if (type === "pawn") editDatasSetByQuery(newIndex, 4, "1");
+      if (type === "pawn") editDatasSetByQuery(el, 4, "1");
       handleAfterClick(color);
     });
   });

@@ -14,7 +14,6 @@ export const posibleMovementsObj = (pawnType, arrTd, gameState) => {
   const { boardDir, kingState, playerTurns, points, eatenPawns } = gameState;
   const Index = index * 1;
   const [row] = arrTd[Index]?.dataset.indexPos.split(",");
-  const Row = row * 1;
 
   const res = {
     pawn: [...pawnMove({ type, pawnMoves }, Index, arrTd, boardDir, color)],

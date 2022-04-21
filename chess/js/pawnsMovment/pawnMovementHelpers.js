@@ -52,7 +52,7 @@ export const checkNumMovesOfPawn = (numMoves) => {
 };
 
 export const movePawnToOtherPile = (queryPos, newPos, pawnType, arr) => {
-  let [index, type, number, color] = pawnType.split("-");
+  let [_, type, number, color] = pawnType.split("-");
   const choosenImg = selectElement(
     `img[data-type-pawn*="${queryPos}-${type}-${number}-${color}"]`
   );

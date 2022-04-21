@@ -4,8 +4,6 @@ import {
   checkColor,
   checkPawnType,
 } from "./Helpers/ChessBoardHelpers.js";
-let num = 1,
-  num2 = 2;
 
 export class ChessBoard {
   parentEl = document.querySelector("#container_ChessBoard");
