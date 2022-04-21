@@ -38,7 +38,6 @@ export const setOtherPawn = (TDindex, numberPawn, color) => {
 export const setUpPawns = {
   0: setOtherPawn,
   1: setPawn,
-
   6: setPawn,
   7: setOtherPawn,
 };

@@ -66,8 +66,9 @@ export const movePawnToOtherPile = (queryPos, newPos, pawnType, arr) => {
   choosenImg.dataset.typePawn = editDataSet(dataSetImg, 0, indexPile);
   const img = choosenTD.firstElementChild;
 
-  if (!img) choosenTD.appendChild(choosenImg);
-  else {
+  if (!img) {
+    choosenTD.appendChild(choosenImg);
+  } else {
     let color1 = getDataFromDataSet(img, 3);
     if (color1 !== color) choosenTD.removeChild(img);
     choosenTD.appendChild(choosenImg);
