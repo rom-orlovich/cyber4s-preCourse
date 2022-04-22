@@ -38,13 +38,15 @@ export const addEventListenerByQueryAll = (nameEvent, handler, query) => {
 };
 
 export const makeArray = (
-  num,
+  start,
+  end,
+  change = 1,
   handler = undefined,
   breakFun = (i) => false,
   unique = true
 ) => {
   const arr = [];
-  for (let i = 1; i < num; i++) {
+  for (let i = start; i < end; i += change) {
     const breakRes = breakFun(i);
     handler ? arr.push(handler(i)) : arr.push(i);
     if (breakRes) break;
@@ -81,4 +83,29 @@ export const editDataSet = (str, pos, newStr, querySplit = "-") => {
   return arrStr.join(querySplit);
 };
 
+export const getSameValueBet2Arr = (arr1, arr2) => {
+  let bigArr,
+    smallArr,
+    newArr = [];
+  if (arr1.length > arr2.length) {
+    bigArr = arr1;
+    smallArr = arr2;
+  } else {
+    bigArr = arr1;
+    smallArr = arr2;
+  }
+  newArr = smallArr
+    .map((num1) => {
+      if (bigArr.some((num2) => num1 === num2)) return num1;
+    })
+    .filter((el) => {
+      if (el) return el;
+    });
+
+  return makeArrayToSet(newArr);
+};
+
+export const getHowManyTimeElApperInArr = (chcekEl, arr) => {
+  return arr.filter((el) => el === chcekEl).length;
+};
 //settimeoutfun implement

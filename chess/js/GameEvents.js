@@ -1,4 +1,9 @@
+import { gameStateInital } from "./App.js";
 import {
+  checkKingPossibleMove,
+  checkPawnThreatMove,
+  checkPossibleThreatOfKing,
+  getDataAboutPawns,
   handleClickPawn,
   handlePosibleMovment,
 } from "./Helpers/handleEventFun.js";
@@ -9,7 +14,10 @@ import {
   genrateObjKeyValueToArr,
   toLog,
 } from "./Helpers/utilitesFun.js";
-import { getDataFromDataSet } from "./pawnsMovment/pawnMovementHelpers.js";
+import {
+  getDataFromDataSet,
+  getKingRelativePos,
+} from "./pawnsMovment/pawnMovementHelpers.js";
 import { posibleMovementsObj } from "./pawnsMovment/posibleMovmentsRes.js";
 
 export class GameEvents {
@@ -17,57 +25,81 @@ export class GameEvents {
   _tdBoardChess;
   _vtDom;
   gameState;
-
+  gameManageState;
   setState;
+  curDataSetInfo;
   constructor() {}
-  initChessBoardControl(arr, gameManageState) {
-    this.dataTd = arr;
-    const [gameState, setState] = gameManageState;
-    this.gameState = gameState();
-    this.setState = setState;
+  initChessBoardControl(dataTd, gameManageState) {
+    const [getGameState, setGameState] = gameManageState;
+    this.gameManageState = gameManageState;
+    this.getGameState = getGameState;
+    this.setGameState = setGameState;
+    this.dataTd = dataTd;
   }
-
+  setSecColor(color) {
+    return color === "white" ? "black" : "white";
+  }
   setAfterPlayerTurn(color) {
+    const gameState = this.getGameState();
     if (color === "white") {
-      this.gameState.activePlayer = "black";
-      this.gameState.playerTurns[0]++;
+      gameState.activePlayer = "black";
+      gameState.playerTurns[0]++;
     } else {
-      this.gameState.activePlayer = "white";
-      this.gameState.playerTurns[1]++;
+      gameState.activePlayer = "white";
+      gameState.playerTurns[1]++;
     }
-    this.setState(this.gameState);
+
+    this.setGameState(gameState);
   }
-  initEvents(dataTd, gameManageState, changeDirFun = () => {}) {
+
+  initEvents(dataTd, gameManageState, controlFunction) {
+    const [changeDirFun, render] = controlFunction;
     this.initChessBoardControl(dataTd, gameManageState);
-
-    // window.addEventListener("onkeydown",()=>{
-
-    // })
     addEventListenerByQuery(
       "click",
       (e) => {
         const target = e.target;
         const dataSetInfo = target.dataset.typePawn;
         if (!dataSetInfo) return;
-        const handleAfterClick = (color, bool = true) => {
-          bool && changeDirFun(color === "white" ? "black" : "white");
-          this.setAfterPlayerTurn(color);
+        this.curClickDataSetInfo = dataSetInfo;
+        const handleAfterClick = (
+          newDataSetInfo,
+          posibleMovementsObj,
+
+          bool = true
+        ) => {
+          this.handleAfterClick(newDataSetInfo, posibleMovementsObj, render);
+          bool && changeDirFun(gameState.activePlayer);
+          this.setGameState(gameState);
         };
-        if (getDataFromDataSet(target, 3) !== this.gameState.activePlayer)
-          return;
-        this.handlerClickMovement(dataSetInfo, this.dataTd, handleAfterClick);
+        const [curIndex, type, _, targetColor] = dataSetInfo.split("-");
+        const gameState = this.getGameState();
+        const kingState = gameState.kingState[targetColor];
+        if (targetColor !== gameState.activePlayer) return;
+        const isInDangerPlace = kingState.threats.some(
+          (el) => el === curIndex * 1
+        );
+        if (isInDangerPlace && type !== "king") return;
+        this.handlerClickMovement(dataSetInfo, handleAfterClick);
       },
       "#container_ChessBoard"
     );
+
     addEventListenerByQuery(
       "mouseover",
       (e) => {
         const target = e.target;
         const dataSetInfo = target?.dataset?.typePawn;
         if (!dataSetInfo) return;
+        const [curIndex, type, _, targetColor] = dataSetInfo.split("-");
+        const gameState = this.getGameState();
+        const kingState = gameState.kingState[targetColor];
         e.target.parentElement.classList.add("active");
-        if (getDataFromDataSet(target, 3) !== this.gameState.activePlayer)
-          return;
+        if (targetColor !== gameState.activePlayer) return;
+        const isInDangerPlace = kingState.threats.some(
+          (el) => el === curIndex * 1
+        );
+        if (isInDangerPlace && type !== "king") return;
         this.handleMouseOver(dataSetInfo, this.dataTd);
       },
       "#container_ChessBoard"
@@ -89,21 +121,129 @@ export class GameEvents {
     );
   }
 
-  handleMouseOver(dataSetInfo, arrTD, addEvent = true) {
+  handleMouseOver(dataSetInfo, addActive = true) {
     let possibleMoves = posibleMovementsObj(
       dataSetInfo,
       this.dataTd,
-      this.gameState
+      this.gameManageState
     );
 
-    // let allMovement = genrateObjKeyValueToArr(normalMove);
-    handlePosibleMovment(dataSetInfo, possibleMoves, arrTD, addEvent);
+    handlePosibleMovment(
+      dataSetInfo,
+      possibleMoves,
+      this.dataTd,
+      this.gameManageState,
+      addActive
+    );
   }
 
-  handlerClickMovement(dataSetInfo, arrTD, handleAfterClick) {
-    let possibleMoves = posibleMovementsObj(dataSetInfo, arrTD, this.gameState);
-    console.log();
-    // let allMovement = genrateObjKeyValueToArr(normalMove);
-    handleClickPawn(dataSetInfo, possibleMoves, arrTD, handleAfterClick);
+  handlerClickMovement(dataSetInfo, handleAfterClick) {
+    let possibleMoves = posibleMovementsObj(dataSetInfo, this.dataTd, [
+      this.getGameState,
+      this.setGameState,
+    ]);
+
+    handleClickPawn(
+      dataSetInfo,
+      possibleMoves,
+      this.dataTd,
+      handleAfterClick,
+      this.gameManageState
+    );
+  }
+
+  handleAfterClick(newDataSetInfo, posibleMovementsObj, render) {
+    const gameState = this.getGameState();
+    const [index, type, _, color] = newDataSetInfo.split("-");
+    this.checkCheckMate(posibleMovementsObj, render);
+    this.setAfterPlayerTurn(gameState.activePlayer);
+    this.setGameState(this.getGameState());
+  }
+  checkCheckMate(posibleMovementsObj, render) {
+    const gameState = this.getGameState();
+    const secColor = this.setSecColor(gameState.activePlayer);
+    const kingState = gameState.kingState[secColor];
+
+    const possibleMove = (newDataSetInfo, relative = true) => {
+      return posibleMovementsObj(
+        newDataSetInfo,
+        this.dataTd,
+        this.gameManageState,
+        relative
+      );
+    };
+
+    const typePawnDataActivePlayer = getDataAboutPawns(
+      gameState.activePlayer,
+      this.dataTd
+    );
+    const typePawnDataSecPlayer = getDataAboutPawns(secColor, this.dataTd);
+    const { kingRelativeMoves: secKingRelativeMoves, kingEl: SecKingColorEl } =
+      getKingRelativePos(secColor, this.dataTd);
+    const [index] = SecKingColorEl.dataset.typePawn.split("-");
+
+    const threatsArr = checkPossibleThreatOfKing(
+      typePawnDataActivePlayer,
+      secKingRelativeMoves,
+      possibleMove
+    );
+    console.log(threatsArr);
+    const threatPawnMoves = checkPawnThreatMove(
+      typePawnDataActivePlayer,
+      possibleMove,
+      index * 1
+    );
+
+    // const { kingRelativeMoves: curKingRelativeMoves, kingEl: curKingColoerEl } =
+    //   getKingRelativePos(secColor, this.dataTd);
+
+    kingState.threats = threatsArr;
+    this.setGameState(gameState);
+    const kingCurPossibleMove = possibleMove(
+      SecKingColorEl.dataset.typePawn,
+      false
+    );
+    const defenseMove = checkPossibleThreatOfKing(
+      typePawnDataSecPlayer,
+      threatPawnMoves,
+      possibleMove,
+      false
+    );
+
+    // console.log("checkCheckMate", secColor, kingCurPossibleMove);
+
+    // console.log(kingState.threats);
+    // console.log("checkCheckMate", secColor, kingState);
+    // console.log(defenseMove, kingCurPossibleMove, kingState.stateCheck);
+    if (
+      kingState.stateCheck === "check" &&
+      kingCurPossibleMove.length === 1 &&
+      defenseMove.length === 0
+    ) {
+      alert("checkmate");
+      kingState.stateCheck === "checkMate";
+      if (confirm("rest?"));
+      {
+        this.setGameState(gameStateInital);
+        render();
+        console.log(gameStateInital);
+      }
+    } else if (kingState.stateCheck === "check") alert("check");
+
+    kingState.relativeMoves = secKingRelativeMoves;
+    kingState.possibleMoves = checkKingPossibleMove(
+      threatsArr,
+      secKingRelativeMoves
+    );
   }
 }
+
+// const threatData = getSameValueBet2Arr(possibleMoves, kingRelativeMoves);
+// if (threatData.length > 0) {
+//   kingState.threat = threatData; // אולי צריך לנקות
+//   if (kingState.threat.find((el) => el === kingState.pos)) {
+//     kingState.stateCheck = "check";
+//     alert("check");
+//   }
+//   // gameState.lastPossibleMove = possibleMoves;
+// }

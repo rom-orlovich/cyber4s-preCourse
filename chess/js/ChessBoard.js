@@ -10,7 +10,6 @@ export class ChessBoard {
   vtDom;
   curTable;
   tdBoardChess;
-  boardDir = 1;
 
   chessPawnSetUp = {
     0: this.setOtherPawns,
@@ -60,18 +59,16 @@ export class ChessBoard {
     return table;
   }
 
-  changeDirBoard(color, stateMangement) {
-    const [gameState, setState] = stateMangement;
-    gameState.boardDir = color === "white" ? 1 : 2;
-
-    gameState.boardDir === 2
+  changeDirBoard(stateMangement) {
+    const [getGameState, setState] = stateMangement;
+    const gameState = getGameState();
+    gameState.activePlayer === "black"
       ? this.parentEl?.classList.add("rotate180")
       : this.parentEl?.classList.remove("rotate180");
-
     this.tdBoardChess.forEach((el) => {
       const img = el?.firstElementChild;
       if (!img) return;
-      gameState.boardDir === 2
+      gameState.activePlayer === "black"
         ? img.classList.add("rotate180Img")
         : img.classList.remove("rotate180Img");
     });

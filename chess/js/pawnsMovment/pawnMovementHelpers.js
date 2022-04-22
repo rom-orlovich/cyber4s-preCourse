@@ -1,6 +1,8 @@
-import { selectElement, editDataSet } from "../Helpers/utilitesFun.js";
-//when the boardDir change and the board is rotate the index of cell are not changing
-//therefore the change calcualtion of the regular pawns it doesn't change
+import {
+  selectElement,
+  editDataSet,
+  makeArrayToSet,
+} from "../Helpers/utilitesFun.js";
 
 export const getDataFromDataSet = (
   el,
@@ -51,12 +53,11 @@ export const checkNumMovesOfPawn = (numMoves) => {
   return NumMoves === 0 ? [8, 16] : [8];
 };
 
-export const movePawnToOtherPile = (queryPos, newPos, pawnType, arr) => {
-  let [_, type, number, color] = pawnType.split("-");
+export const movePawnToOtherPile = (pawnType, newPos) => {
+  let [index, type, number, color] = pawnType.split("-");
   const choosenImg = selectElement(
-    `img[data-type-pawn*="${queryPos}-${type}-${number}-${color}"]`
+    `img[data-type-pawn*="${index}-${type}-${number}-${color}"]`
   );
-
   const choosenTD = selectElement(`td[data-index-pos*="${newPos}"]`);
 
   if (!(choosenImg && choosenTD)) return;
@@ -74,5 +75,28 @@ export const movePawnToOtherPile = (queryPos, newPos, pawnType, arr) => {
     choosenTD.appendChild(choosenImg);
   }
 
-  return true;
+  return choosenImg.dataset.typePawn;
 };
+
+export const getKingRelativePos = (color, arrTd) => {
+  const getKingImg = selectElement(
+    `img[data-type-pawn*="king"][data-type-pawn*="${color}"]`
+  );
+  if (!getKingImg) return;
+  const typePawn = getKingImg.dataset.typePawn;
+  let kingMoves = [-9, -7, 9, 7, -1, 1, 8, -8];
+  const [curIndex, type, _] = typePawn.split("-");
+
+  kingMoves = kingMoves.map((el) => {
+    const CurIndex = curIndex * 1;
+    return checkIligalePos(CurIndex + el, CurIndex, arrTd);
+  });
+  return { kingEl: getKingImg, kingRelativeMoves: makeArrayToSet(kingMoves) };
+};
+
+// this.gameState.kingState[secColor].threat = getKingRelativePos(
+//   //       secColor
+//   //     ).map((el, i) => {
+//   // if (el === possibleMoves[i])
+//   // return el;
+//   //     });

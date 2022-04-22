@@ -1,22 +1,33 @@
 import {
   checkIligalePos,
   editDatasSetByQuery,
+  getDataFromDataSet,
+  getKingRelativePos,
   getNextPileChild,
   movePawnToOtherPile,
 } from "../pawnsMovment/pawnMovementHelpers.js";
+import { posibleMovementsObj } from "../pawnsMovment/posibleMovmentsRes.js";
+import {
+  getHowManyTimeElApperInArr,
+  getSameValueBet2Arr,
+  makeArray,
+} from "./utilitesFun.js";
 
 export const handlePosibleMovment = (
   pawnType,
-  arrMovement,
+  posibleMoves,
   arrTD,
-  addEvent = true
+  gameManageState,
+  addActive = true
 ) => {
   const [index, type, number, color] = pawnType.split("-");
 
-  arrMovement.forEach((change) => {
-    // const Index = index * 1;
-    // const newPos = checkIligalePos(Index + change, Index, arrTD);
-    addEvent
+  const [getGameState, setGameState] = gameManageState;
+  const gameState = getGameState();
+  const kingState = gameState.kingState[gameState.activePlayer];
+
+  posibleMoves.forEach((change) => {
+    addActive
       ? arrTD[change].classList.add("active")
       : arrTD[change].classList.remove("active");
   });
@@ -26,27 +37,121 @@ export const handleClickPawn = (
   pawnType,
   posibleMoves,
   arrTD,
-  handleAfterClick
+  handleAfterClick,
+  gameManageState
 ) => {
   let [CurIndex, type, _, color] = pawnType.split("-");
-  // const curIndex = index * 1;
-
+  const [getGameState, setGameState] = gameManageState;
+  const gameState = getGameState();
   posibleMoves.forEach((el) => {
-    // const newIndex = checkIligalePos(curIndex + el, curIndex, arrTD);
+    const kingState = gameState.kingState[gameState.activePlayer];
+
     arrTD[el].addEventListener("click", (e) => {
-      console.log(el);
       const target = e.target.closest("td");
       const indexPosTDClick = target?.dataset?.indexPos;
+
       if (!target) return;
-      let bool = movePawnToOtherPile(
-        CurIndex * 1,
-        indexPosTDClick,
-        pawnType,
-        arrTD
-      );
-      if (!bool) return;
+      let dataInfo = movePawnToOtherPile(pawnType, indexPosTDClick);
+
+      if (!dataInfo) return;
       if (type === "pawn") editDatasSetByQuery(el, 4, "1");
-      handleAfterClick(color);
+      if (type === "king") {
+        gameState.kingState[color].pos = dataInfo.split("-")[0];
+        setGameState(gameState);
+      }
+      handleAfterClick(dataInfo, posibleMovementsObj);
     });
   });
 };
+
+export const getDataAboutPawns = (color, arrTD) => {
+  const curDataPawn = [];
+  arrTD.forEach((td) => {
+    const img = td.firstElementChild;
+    if (!img) return;
+    const colorImg = getDataFromDataSet(img, 3);
+
+    if (colorImg === color) curDataPawn.push(img.dataset.typePawn);
+  });
+  return curDataPawn;
+};
+const getTheMovmentUntilTheKing = (posPawn, kingPos, arr) => {
+  const kingPosIndex = arr.findIndex((el) => el === kingPos);
+  const posPawnIndex = arr.findIndex((el) => el === posPawn);
+  let diff;
+  if (!(kingPosIndex && posPawnIndex)) return [];
+  diff = Math.abs(posPawn - kingPos);
+
+  let i;
+  if (diff % 7 === 0) i = 7;
+  else if (diff % 8 === 0) i = 8;
+  else if (diff % 9 === 0) i = 9;
+  else i = 1;
+
+  const arrS = makeArray(
+    Math.min(posPawn, kingPos),
+    Math.max(posPawn, kingPos),
+    i
+  );
+
+  // console.log(arr, kingPosIndex, posPawnIndex);
+  // return arr.slice(
+  //   Math.min(kingPosIndex, posPawnIndex),
+  //   Math.max(kingPosIndex, posPawnIndex)
+  // );
+  return arrS;
+};
+
+export const checkPossibleThreatOfKing = (
+  typePawnData,
+  kingPossibleMoves,
+  possibleMoves,
+  relative = true
+) => {
+  let threatArr = [];
+  typePawnData.forEach((data) => {
+    const possibleMove = possibleMoves(data, relative);
+    const sameValue = getSameValueBet2Arr(possibleMove, kingPossibleMoves);
+    if (sameValue.length === 0) return;
+    threatArr = [...threatArr, ...sameValue];
+  });
+  return threatArr;
+};
+
+export const checkPawnThreatMove = (typePawnData, possibleMoves, kingPos) => {
+  let playerMove = [];
+  typePawnData.forEach((data) => {
+    const [curIndex] = data.split("-");
+    const possibleMove = possibleMoves(data);
+    const movmentUntilTheKing = getTheMovmentUntilTheKing(
+      curIndex * 1,
+      kingPos,
+      possibleMove
+    );
+    const sameValue = getSameValueBet2Arr(possibleMove, movmentUntilTheKing);
+    if (sameValue.length === 0) return;
+    playerMove = [...playerMove, ...sameValue];
+  });
+
+  return playerMove;
+};
+
+export const checkKingPossibleMove = (threatArr, curPossibleMoves) => {
+  const newPossibleMove = [];
+  curPossibleMoves.forEach((pm) => {
+    const timesInThreat = getHowManyTimeElApperInArr(pm, threatArr);
+    if (timesInThreat < 2) newPossibleMove.push(pm);
+  });
+
+  return newPossibleMove;
+};
+
+///create check mate disable function
+// if (kingState.threat.length > 0)
+//   if (el && !kingState.threat.every((treat) => treat === el))
+//     return () => {
+//       console.log("s");
+//       kingState.checkState = "checkmate";
+//       setGameState(gameState);
+//       alert("checkmate");
+//     };
