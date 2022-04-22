@@ -109,3 +109,5 @@ export const getHowManyTimeElApperInArr = (chcekEl, arr) => {
   return arr.filter((el) => el === chcekEl).length;
 };
 //settimeoutfun implement
+export const objDeepCopy = (obj) => JSON.parse(JSON.stringify(obj));
+console.log(objDeepCopy({ asds: 5 }));

@@ -67,21 +67,7 @@ export const posibleMovementsObj = (
       ...rookMove(type, 8, Index, -8, arrTd, color, relativeMoves),
     ],
 
-    king:
-      // [
-      // ...
-      kingMove(pawnTypeArr, arrTd, gameManageState, relativeMoves),
-    // ...kingMove(pawnTypeArr, arrTd, gameManageState, relativeMoves),
-    // ...kingMove(pawnTypeArr, arrTd, gameManageState, relativeMoves),
-
-    // ...kingMove(pawnTypeArr, arrTd, gameManageState, relativeMoves),
-    // ...kingMove(pawnTypeArr, arrTd, gameManageState, relativeMoves),
-
-    // ...kingMove(pawnTypeArr, arrTd, gameManageState, relativeMoves),
-    // ...kingMove(pawnTypeArr, arrTd, gameManageState, relativeMoves),
-
-    // ...kingMove(pawnTypeArr, arrTd, gameManageState, relativeMoves),
-    // ],
+    king: kingMove(pawnTypeArr, arrTd, gameManageState, relativeMoves),
   };
 
   // console.log(makeArrayToSet(res[type]));

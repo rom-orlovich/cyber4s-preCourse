@@ -1,7 +1,11 @@
 export class state {
   state;
 
-  setState(state) {
+  setState(state, newState = false) {
+    if (newState) {
+      this.state = state;
+      return;
+    }
     let obj = {};
     for (const key in state) {
       obj = {
