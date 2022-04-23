@@ -11,6 +11,20 @@ import {
   checkNumMovesOfPawn,
 } from "./pawnMovementHelpers.js";
 
+const getRowsColumns = (curIndex, newIndex, arrTD) => {
+  const CurIndex = curIndex * 1;
+
+  const NewIndex = checkIligalePos(newIndex, CurIndex, arrTD);
+  const [row, column] = arrTD[CurIndex]?.dataset.indexPos.split(",");
+  const [rowNext, columnNext] = arrTD[NewIndex]?.dataset.indexPos.split(",");
+
+  return {
+    curPos: [row, column],
+    newPos: [rowNext, columnNext],
+    NewIndex: NewIndex,
+  };
+};
+
 export const breakLoop = (change, curIndex, arrTd, color, relativeMoves) => {
   const newPos = change + curIndex;
   const nextPileChild = getNextPileChild(newPos, curIndex, arrTd);
@@ -19,40 +33,42 @@ export const breakLoop = (change, curIndex, arrTd, color, relativeMoves) => {
   if (relativeMoves && getColorDataSet === color) return true;
   if (getColorDataSet !== color || getColorDataSet === color) return true;
 };
-const obliquePossibleMovment = (change, curIndex, arr, color) => {
-  const CurIndex = curIndex * 1;
-  const newIndex = checkIligalePos(CurIndex + change, CurIndex, arr);
-  const [row, coulmn] = arr[CurIndex]?.dataset.indexPos.split(",");
-  const [rowNext, coulmnNext] = arr[newIndex]?.dataset.indexPos.split(",");
+const obliquePossibleMovment = (curIndex, change, arr, color) => {
+  const {
+    newPos: [row, column],
+    curPos: [rowNext, columnNext],
+    NewIndex,
+  } = getRowsColumns(curIndex, curIndex + change, arr);
 
-  if (Math.abs(rowNext - row) !== Math.abs(coulmnNext - coulmn)) {
-    return CurIndex;
+  if (Math.abs(rowNext - row) !== Math.abs(columnNext - column)) {
+    return curIndex;
   }
 
-  const firstChildEl = getNextPileChild(newIndex, curIndex, arr);
-  if (firstChildEl && firstChildEl.dataset.typePawn?.split("-")[3] === color)
-    return CurIndex;
-  return newIndex;
+  const nextPileImg = getNextPileChild(NewIndex, curIndex, arr);
+  const colorNextPileImg = getDataFromDataSet(nextPileImg, 3);
+  if (nextPileImg && colorNextPileImg === color) return curIndex;
+  return NewIndex;
 };
 
-const verticalPossibleMovment = (change, curIndex, arr, color) => {
-  const CurIndex = curIndex * 1;
-  const newIndex = checkIligalePos(CurIndex + change, CurIndex, arr);
-  const [row, column] = arr[CurIndex]?.dataset.indexPos.split(",");
-  const [rowNext, columnNext] = arr[newIndex]?.dataset.indexPos.split(",");
+const verticalPossibleMovment = (curIndex, change, arr, color) => {
+  const {
+    newPos: [row, column],
+    curPos: [rowNext, columnNext],
+    NewIndex,
+  } = getRowsColumns(curIndex, curIndex + change, arr);
   if (
     !(
       (rowNext !== row && column === columnNext) ||
       (rowNext === row && column !== columnNext)
     )
   ) {
-    return CurIndex;
+    return curIndex;
   }
-  const firstChildEl = getNextPileChild(newIndex, CurIndex, arr);
-  if (firstChildEl && firstChildEl.dataset.typePawn?.split("-")[3] === color)
-    return CurIndex;
+  const nextPileImg = getNextPileChild(NewIndex, curIndex, arr);
+  const colorNextPileImg = getDataFromDataSet(nextPileImg, 3);
+  if (nextPileImg && colorNextPileImg === color) return curIndex;
 
-  return newIndex;
+  return NewIndex;
 };
 
 export const bishopMove = (
@@ -73,7 +89,7 @@ export const bishopMove = (
         1,
         lengthLoop,
         1,
-        (i) => obliquePossibleMovment(i * change, curIndex, arrTd, color),
+        (i) => obliquePossibleMovment(curIndex, i * change, arrTd, color),
         (i) => breakLoop(i * change, curIndex, arrTd, color, relativeMoves)
       );
 };
@@ -97,21 +113,48 @@ export const rookMove = (
         1,
         lengthLoop,
         1,
-        (i) => verticalPossibleMovment(i * change, curIndex, arrTd, color),
+        (i) => verticalPossibleMovment(curIndex, i * change, arrTd, color),
         (i) => breakLoop(i * change, curIndex, arrTd, color, relativeMoves)
       );
 };
 
-const checkPawnMovement = (curIndex, newIndex, arrTd) => {
-  const CurIndex = curIndex * 1;
-  const NewIndex = checkIligalePos(newIndex, curIndex, arrTd);
-  const [newRow, newolumn] = arrTd[NewIndex].dataset.indexPos;
+const checkPawnMovement = (curIndex, newIndex, arrTD, color, relativeMoves) => {
+  const {
+    newPos: [row, column],
+    curPos: [rowNext, columnNext],
+    NewIndex,
+  } = getRowsColumns(curIndex, newIndex, arrTD);
+
+  const rowDiff1 = Math.abs(row - rowNext) === 1;
+  const rowDiff2 = Math.abs(row - rowNext) === 2;
+  const columnDiff0 = Math.abs(column - columnNext) === 0;
+  const columnDiff1 = Math.abs(column - columnNext) === 1;
+  const firstRowMoveCheck = rowDiff1 && columnDiff0;
+  const secRowMoveCheck = rowDiff2 && columnDiff0;
+  const eatMoveCheck = rowDiff1 && columnDiff1;
+  if (!(firstRowMoveCheck || secRowMoveCheck || eatMoveCheck)) return curIndex;
+
+  const nextPileImg = getNextPileChild(NewIndex, curIndex, arrTD);
+
+  if (firstRowMoveCheck && !nextPileImg) return NewIndex;
+
+  if (secRowMoveCheck && !nextPileImg) return NewIndex;
+
+  const colorNextPileImg = getDataFromDataSet(nextPileImg, 3);
+
+  if (
+    (eatMoveCheck && nextPileImg && color !== colorNextPileImg) ||
+    (eatMoveCheck && relativeMoves)
+  )
+    return NewIndex;
+
+  return curIndex;
 };
 
 export const pawnMove = (
   pawnType,
-  curIndex = curIndex * 1,
-  arrTd,
+  curIndex,
+  arrTD,
   boardDir,
   color,
   relativeMoves
@@ -120,45 +163,26 @@ export const pawnMove = (
   let numMovesPawn = checkNumMovesOfPawn(pawnType.pawnMoves);
   let arrChanges = cheakBoardDir(boardDir, color, [7, 9, ...numMovesPawn]);
   const arr = arrChanges.map((change) => {
-    const newIndex = checkIligalePos(curIndex + change, curIndex, arrTd);
-    const checkOblique =
-      newIndex - 7 === curIndex ||
-      newIndex + 7 === curIndex ||
-      newIndex - 9 === curIndex ||
-      newIndex + 9 === curIndex;
-
-    const td = arrTd[newIndex];
-    if (!td) return curIndex;
-    const img = td?.firstElementChild;
-
-    if (
-      !img &&
-      !checkOblique &&
-      (!arrTd[curIndex + 8].firstElementChild ||
-        !arrTd[curIndex - 8].firstElementChild)
-    )
-      return newIndex;
-    if (img) {
-      const colorDataSet = getDataFromDataSet(img, 3);
-      if ((colorDataSet !== color && checkOblique) || relativeMoves)
-        return newIndex;
-
-      if (colorDataSet === color) return curIndex;
-    }
-    return curIndex;
+    return checkPawnMovement(
+      curIndex,
+      curIndex + change,
+      arrTD,
+      color,
+      relativeMoves
+    );
   });
   return arr;
 };
 
-const checKnightMove = (curIndex, newIndex, arr) => {
-  if (!arr[newIndex]) return;
-  const [row, column] = arr[curIndex]?.dataset.indexPos?.split(",");
-  const [rowNext, columnNext] = arr[newIndex].dataset?.indexPos?.split(",");
+const checKnightMove = (curIndex, newIndex, arrTd) => {
+  const NewIndex = checkIligalePos(newIndex, curIndex, arrTd);
+  const [row, column] = arrTd[curIndex]?.dataset.indexPos?.split(",");
+  const [rowNext, columnNext] = arrTd[NewIndex].dataset?.indexPos?.split(",");
   if (
     Math.abs(rowNext - row) * 2 === Math.abs(column - columnNext) ||
     Math.abs(rowNext - row) === Math.abs(column - columnNext) * 2
   )
-    return arr[newIndex];
+    return NewIndex;
 };
 
 export const knightMove = (
@@ -172,14 +196,14 @@ export const knightMove = (
   if (type !== "knight") return [];
   return changes.map((change) => {
     const CurIndex = curIndex * 1;
-    const newIndex = checkIligalePos(CurIndex + change, CurIndex, arrTd);
-    const checkNextPileChild = checKnightMove(curIndex, newIndex, arrTd);
+    const NewIndex = checKnightMove(curIndex, CurIndex + change, arrTd);
+    const checkNextPileChild = arrTd[NewIndex];
     if (!checkNextPileChild) return CurIndex;
     const img = checkNextPileChild.firstElementChild;
-    if (!img) return newIndex;
+    if (!img) return NewIndex;
     const colorDataSet = getDataFromDataSet(img, 3);
     if (!relativeMoves && colorDataSet === color) return CurIndex;
-    else return newIndex;
+    else return NewIndex;
   });
 };
 

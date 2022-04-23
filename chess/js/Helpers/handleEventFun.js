@@ -11,6 +11,7 @@ import {
   getHowManyTimeElApperInArr,
   getSameValueBet2Arr,
   makeArray,
+  makeArrayToSet,
 } from "./utilitesFun.js";
 
 export const handlePosibleMovment = (
@@ -78,8 +79,9 @@ export const getDataAboutPawns = (color, arrTD) => {
 const getTheMovmentUntilTheKing = (posPawn, kingPos, arr) => {
   const kingPosIndex = arr.findIndex((el) => el === kingPos);
   const posPawnIndex = arr.findIndex((el) => el === posPawn);
+
   let diff;
-  if (!(kingPosIndex && posPawnIndex)) return [];
+  if (kingPosIndex === -1 || posPawnIndex === -1) return [];
   diff = Math.abs(posPawn - kingPos);
 
   let i;
@@ -94,28 +96,36 @@ const getTheMovmentUntilTheKing = (posPawn, kingPos, arr) => {
     i
   );
 
-  // console.log(arr, kingPosIndex, posPawnIndex);
-  // return arr.slice(
-  //   Math.min(kingPosIndex, posPawnIndex),
-  //   Math.max(kingPosIndex, posPawnIndex)
-  // );
-  return arrS;
+  return makeArrayToSet(arrS);
 };
 
 export const checkPossibleThreatOfKing = (
   typePawnData,
-  kingPossibleMoves,
-  possibleMoves,
+  theCheckedMoves,
+  possibleMovesFun,
   relative = true
 ) => {
   let threatArr = [];
   typePawnData.forEach((data) => {
-    const possibleMove = possibleMoves(data, relative);
-    const sameValue = getSameValueBet2Arr(possibleMove, kingPossibleMoves);
+    const pawnsPossibleMove = possibleMovesFun(data, relative);
+    // if (data.split("-")[1] === "pawn")
+    //   console.log(data, "kingPos", pawnsPossibleMove);
+    const sameValue = getSameValueBet2Arr(pawnsPossibleMove, theCheckedMoves);
+    // console.log(
+    //   data,
+    //   "sameValue",
+    //   sameValue,
+    //   "pawnsPossibleMove",
+    //   pawnsPossibleMove,
+    //   "theCheckedMoves",
+    //   theCheckedMoves
+    // );
+
     if (sameValue.length === 0) return;
     threatArr = [...threatArr, ...sameValue];
   });
   return threatArr;
+  // return makeArrayToSet(threatArr);
 };
 
 export const checkPawnThreatMove = (typePawnData, possibleMoves, kingPos) => {
@@ -123,16 +133,18 @@ export const checkPawnThreatMove = (typePawnData, possibleMoves, kingPos) => {
   typePawnData.forEach((data) => {
     const [curIndex] = data.split("-");
     const possibleMove = possibleMoves(data);
+
     const movmentUntilTheKing = getTheMovmentUntilTheKing(
       curIndex * 1,
       kingPos,
       possibleMove
     );
+
     const sameValue = getSameValueBet2Arr(possibleMove, movmentUntilTheKing);
     if (sameValue.length === 0) return;
     playerMove = [...playerMove, ...sameValue];
   });
-
+  // return makeArrayToSet(playerMove);
   return playerMove;
 };
 

@@ -72,7 +72,6 @@ export class GameEvents {
           if (this.checkReset(initApp)) return;
           bool && changeDirFun(this.gameManageState);
           this.setGameState(gameState);
-          console.log(gameState);
         };
         if (isInDangerPlace && type !== "king") return;
         this.handlerClickMovement(dataSetInfo, handleAfterClick);
@@ -147,14 +146,13 @@ export class GameEvents {
     );
   }
 
-  handleAfterClick(newDataSetInfo, posibleMovementsObj, initApp) {
+  handleAfterClick(newDataSetInfo, posibleMovementsObj) {
     const gameState = this.getGameState();
     const [index, type, _, color] = newDataSetInfo.split("-");
     this.checkCheckMate(posibleMovementsObj);
     this.setAfterPlayerTurn(gameState.activePlayer);
-    // if (this.checkGame(initApp)) return;
+
     this.setGameState(gameState);
-    console.log(gameState);
   }
   checkCheckMate(posibleMovementsObj) {
     const gameState = this.getGameState();
@@ -177,18 +175,18 @@ export class GameEvents {
     const typePawnDataSecPlayer = getDataAboutPawns(secColor, this.dataTd);
     const { kingRelativeMoves: secKingRelativeMoves, kingEl: SecKingColorEl } =
       getKingRelativePos(secColor, this.dataTd);
-    const [index] = SecKingColorEl.dataset.typePawn.split("-");
+    const [kingPos] = SecKingColorEl.dataset.typePawn.split("-");
 
     const threatsArr = checkPossibleThreatOfKing(
       typePawnDataActivePlayer,
       secKingRelativeMoves,
       possibleMove
     );
-    console.log(threatsArr);
+
     const threatPawnMoves = checkPawnThreatMove(
       typePawnDataActivePlayer,
       possibleMove,
-      index * 1
+      kingPos * 1
     );
 
     // const { kingRelativeMoves: curKingRelativeMoves, kingEl: curKingColoerEl } =
@@ -196,10 +194,12 @@ export class GameEvents {
 
     kingState.threats = threatsArr;
     this.setGameState(gameState);
+
     const kingCurPossibleMove = possibleMove(
       SecKingColorEl.dataset.typePawn,
       false
     );
+    console.log(threatPawnMoves);
     const defenseMove = checkPossibleThreatOfKing(
       typePawnDataSecPlayer,
       threatPawnMoves,
@@ -211,7 +211,7 @@ export class GameEvents {
 
     // console.log(kingState.threats);
     // console.log("checkCheckMate", secColor, kingState);
-    // console.log(defenseMove, kingCurPossibleMove, kingState.stateCheck);
+    console.log(defenseMove, kingCurPossibleMove, kingState.stateCheck);
     if (
       kingState.stateCheck === "check" &&
       kingCurPossibleMove.length === 1 &&
@@ -220,7 +220,9 @@ export class GameEvents {
       alert("checkmate");
       kingState.stateCheck = "checkmate";
       this.setGameState(gameState);
-    } else if (kingState.stateCheck === "check") alert("check");
+    } else if (kingState.stateCheck === "check") {
+      alert("check");
+    }
 
     kingState.relativeMoves = secKingRelativeMoves;
     kingState.possibleMoves = checkKingPossibleMove(

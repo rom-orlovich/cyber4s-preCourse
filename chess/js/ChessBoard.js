@@ -38,15 +38,15 @@ export class ChessBoard {
     let indexPile = -1;
     for (let row = 0; row < SIZE; row++) {
       let tr = table.insertRow();
-      for (let coulmn = 0; coulmn < SIZE; coulmn++) {
+      for (let column = 0; column < SIZE; column++) {
         indexPile++;
         let td = tr.insertCell();
-        td.dataset.indexPos = [row, coulmn];
+        td.dataset.indexPos = [row, column];
         td.dataset.indexPile = indexPile;
         if (row === 0 || row === 1 || row === 6 || row === 7)
           this.chessPawnSetUp[row](
             td,
-            coulmn,
+            column,
             indexPile,
             checkColor(row, "white", "black")
           );
