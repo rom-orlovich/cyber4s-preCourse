@@ -102,6 +102,12 @@ export const rookMove = (
       );
 };
 
+const checkPawnMovement = (curIndex, newIndex, arrTd) => {
+  const CurIndex = curIndex * 1;
+  const NewIndex = checkIligalePos(newIndex, curIndex, arrTd);
+  const [newRow, newolumn] = arrTd[NewIndex].dataset.indexPos;
+};
+
 export const pawnMove = (
   pawnType,
   curIndex = curIndex * 1,
