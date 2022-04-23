@@ -20,6 +20,7 @@ export class GameEvents {
   setState;
   curDataSetInfo;
   constructor() {}
+
   initChessBoardControl(dataTd, gameManageState) {
     const [getGameState, setGameState] = gameManageState;
     this.gameManageState = gameManageState;
@@ -150,7 +151,6 @@ export class GameEvents {
     const gameState = this.getGameState();
     const [index, type, _, color] = newDataSetInfo.split("-");
 
-    // console.log(gameState.kingState[this.setSecColor(color)]);
     this.checkCheckMate(posibleMovementsObj);
     this.setAfterPlayerTurn(gameState.activePlayer);
 
@@ -207,12 +207,6 @@ export class GameEvents {
       possibleMove,
       false
     );
-
-    // console.log("checkCheckMate", secColor, kingCurPossibleMove);
-
-    // console.log(kingState.threats);
-    // console.log("checkCheckMate", secColor, kingState);
-    // console.log(defenseMove, kingCurPossibleMove, kingState.stateCheck);
     if (
       kingState.stateCheck === "check" &&
       kingCurPossibleMove.length === 1 &&

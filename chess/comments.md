@@ -15,3 +15,19 @@
 // movePawnToOtherPile("59-queen-3-white", [5, 5]);
 // movePawnToOtherPile("61-bishop-5-white", [4, 2]);
 // movePawnToOtherPile("52-pawn-4-white-0", [4, 4]);
+
+///create check mate disable function
+// if (kingState.threat.length > 0)
+// if (el && !kingState.threat.every((treat) => treat === el))
+// return () => {
+// console.log("s");
+// kingState.checkState = "checkmate";
+// setGameState(gameState);
+// alert("checkmate");
+// };
+// return makeArrayToSet(playerMove);
+// console.log("checkCheckMate", secColor, kingCurPossibleMove);
+
+    // console.log(kingState.threats);
+    // console.log("checkCheckMate", secColor, kingState);
+    // console.log(defenseMove, kingCurPossibleMove, kingState.stateCheck);

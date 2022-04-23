@@ -22,7 +22,6 @@ export const handlePosibleMovment = (
   addActive = true
 ) => {
   const [index, type, number, color] = pawnType.split("-");
-
   const [getGameState, setGameState] = gameManageState;
   const gameState = getGameState();
   const kingState = gameState.kingState[gameState.activePlayer];
@@ -96,7 +95,6 @@ const getTheMovmentUntilTheKing = (posPawn, kingPos, arr) => {
     i
   );
   return arrS;
-  // return makeArrayToSet(arrS);
 };
 
 export const checkPossibleThreatOfKing = (
@@ -108,24 +106,13 @@ export const checkPossibleThreatOfKing = (
   let threatArr = [];
   typePawnData.forEach((data) => {
     const pawnsPossibleMove = possibleMovesFun(data, relative);
-    // if (data.split("-")[1] === "pawn")
-    //   console.log(data, "kingPos", pawnsPossibleMove);
+
     const sameValue = getSameValueBet2Arr(pawnsPossibleMove, theCheckedMoves);
-    // console.log(
-    //   data,
-    //   "sameValue",
-    //   sameValue,
-    //   "pawnsPossibleMove",
-    //   pawnsPossibleMove,
-    //   "theCheckedMoves",
-    //   theCheckedMoves
-    // );
 
     if (sameValue.length === 0) return;
     threatArr = [...threatArr, ...sameValue];
   });
   return threatArr;
-  // return makeArrayToSet(threatArr);
 };
 
 export const checkPawnThreatMove = (typePawnData, possibleMoves, kingPos) => {
@@ -144,7 +131,7 @@ export const checkPawnThreatMove = (typePawnData, possibleMoves, kingPos) => {
     if (sameValue.length === 0) return;
     playerMove = [...playerMove, ...sameValue];
   });
-  // return makeArrayToSet(playerMove);
+
   return playerMove;
 };
 
@@ -157,13 +144,3 @@ export const checkKingPossibleMove = (threatArr, curPossibleMoves) => {
 
   return newPossibleMove;
 };
-
-///create check mate disable function
-// if (kingState.threat.length > 0)
-//   if (el && !kingState.threat.every((treat) => treat === el))
-//     return () => {
-//       console.log("s");
-//       kingState.checkState = "checkmate";
-//       setGameState(gameState);
-//       alert("checkmate");
-//     };
