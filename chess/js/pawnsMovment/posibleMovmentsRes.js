@@ -70,10 +70,5 @@ export const posibleMovementsObj = (
     king: kingMove(pawnTypeArr, arrTd, gameManageState, relativeMoves),
   };
 
-  // console.log(makeArrayToSet(res[type]));
-  // console.log(res[type]);
   return [...res[type]];
-
-  // console.log("king", makeArrayToSet(res["king"]));
-  // return makeArrayToSet(res[type]);
 };

@@ -244,13 +244,13 @@ export const kingMove = (typePawn, arrTd, gameManageState, relativeMoves) => {
   const [getGameState, setGameState] = gameManageState;
   const gameState = getGameState();
   const { kingState } = gameState;
-  // console.log(kingState);
+
   const kingStateByColor = kingState[color];
   const curPosisbleMove = kingStateByColor.possibleMoves;
   const curThreatArr = kingStateByColor.threats;
-  // console.log(curPosisbleMove);
+
   const curIndex = index * 1;
-  // console.log(curThreatArr);
+
   const newPossibleMove = [];
   let curThreat, curThreatInPos;
   curPosisbleMove.forEach((el) => {
@@ -260,47 +260,21 @@ export const kingMove = (typePawn, arrTd, gameManageState, relativeMoves) => {
       curThreatInPos = curThreatArr.some(
         (threat) => threat === el && threat === curIndex
       );
-    // console.log(curThreat);
-    // console.log(curThreat, "threat", el);
+
     const nextPileChild = getNextPileChild(el, curIndex, arrTd);
     const colorDataSet = getDataFromDataSet(nextPileChild, 3);
     if (!colorDataSet && !curThreat) newPossibleMove.push(el);
-    // console.log("colorDataSet", colorDataSet, "curThreat", curThreat);
-    // if (!colorDataSet && curThreat) {
-    //   console.log("s");
-    //   kingStateByColor.stateCheck = "check";
-    //   alert("check");
-    // }
 
     if (colorDataSet && colorDataSet !== color) newPossibleMove.push(el);
     else if (relativeMoves) newPossibleMove.push(el);
   });
-  // console.log(curThreatInPos);
+
   if (curThreatInPos) {
     kingStateByColor.stateCheck = "check";
-    // alert("check");
   }
 
   kingStateByColor.newPossibleMoves = newPossibleMove;
-  // console.log(kingStateByColor);
+
   setGameState(gameState);
   return newPossibleMove;
-
-  // const newIndex = checkIligalePos(curIndex + changes[0], curIndex, arrTd);
-
-  // // console.log(gameState);
-
-  // const nextPileChild = getNextPileChild(newIndex, curIndex, arrTd);
-  // const colorDataSet = getDataFromDataSet(nextPileChild, 3);
-  // const iligalPos = lastPossibleMove.find((el) => el === newIndex);
-
-  // //צריך להאזין לאיומים על המלך מחוץ לפונקציה ולמנוע תזוזה של המלך במיקומים האלו
-
-  // const threat = kingStateByColor.threat.find((el) => el === newIndex);
-
-  // if ((iligalPos && !colorDataSet) || threat) {
-  //   return [];
-  // }
 };
-//לבדוק את האיומים על המלך
-//לבטל את האפשרותלאכול את המלך

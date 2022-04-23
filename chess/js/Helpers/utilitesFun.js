@@ -1,42 +1,99 @@
-export const toLog = (vars) => {
-  const key = Object.keys(vars);
+/**
+ *
+ * @param {Object} vaparmars Get object as parameter and console log it.
+ */
+export const toLog = (parma) => {
+  const key = Object.keys(parma);
   key.forEach((el) => {
-    console.log(el, vars[el]);
+    console.log(el, parma[el]);
   });
 };
+
+/**
+ *
+ * @param {Array} arr
+ * @returns Array with unique values
+ */
 export const makeArrayToSet = (arr) => [...new Set(arr)];
+
+/**
+ *
+ * @param {String} str
+ * @returns HTML element based on the string
+ */
 export const createEl = (str) => {
   const temp = document.createElement("template");
   temp.innerHTML = str.trim();
   return temp["content"].firstElementChild;
 };
 
+/**
+ *
+ * @param {String} src
+ * @param {String} alt
+ * @returns Image element  as string
+ */
 export const createImgHtml = (src, alt = "Image not found") => {
   return `<img src="${src}" alt="${alt}"/> `;
 };
+/**
+ *
+ * @param {String} query
+ * @param {Document| Element} scope The scope where to excute the query
+ * @returns The result Element of the query or null
+ */
 export const selectElement = (query, scope = document) => {
   return scope.querySelector(query);
 };
+
+/**
+ *
+ * @param {String} query
+ * @param {Document| Element} scope The scope where to excute the query
+ * @returns The result Elements of the query or empty HTML collection
+ */
 export const selectAllElements = (query, scope = document) => {
   return scope.querySelectorAll(query);
 };
+
+/**
+ *
+ * @param {String} nameEvent
+ * @param {Function} handler The callback function of the event listener
+ * @param {String} query
+ * @returns The result element which the event listener attach to it.
+ */
 export const addEventListenerByQuery = (nameEvent, handler, query) => {
   const element = selectElement(query);
   element.addEventListener(nameEvent, handler);
   return element;
 };
+
+/**
+ *
+ * @param {String} nameEvent
+ * @param {Function} handler The callback function of the event listener
+ * @param {String} query
+ * @returns The result element which the event listener attach to it.
+ */
 export const removeEventListenerByQuery = (nameEvent, handler, query) => {
   const element = selectElement(query);
   element.removeEventListener(nameEvent, handler);
   return element;
 };
 
-export const addEventListenerByQueryAll = (nameEvent, handler, query) => {
-  const elements = selectAllElements(query);
-  elements.forEach((el) => el.addEventListener(nameEvent, handler));
-  return elements;
-};
-
+/**
+ *
+ * @param {Number} start
+ * @param {Number} end
+ * @param {Number} change The I of the loop
+ * @param {Function} handler function to excute on the I before push it to array.
+ * If it is not defined so the array push the regular I
+ * @param {Function} breakFun  Function to break the loop.
+ * If it is not defined the function will excute regulary.
+ * @param {Boolean} unique Make the array with uniqe values
+ * @returns Array
+ */
 export const makeArray = (
   start,
   end,
@@ -55,6 +112,11 @@ export const makeArray = (
   return unique ? makeArrayToSet(arr) : arr;
 };
 
+/**
+ *
+ * @param {Object} obj
+ * @returns Object without the undefined values.
+ */
 export const getObjKeyWithValue = (obj) => {
   let newObj = {};
 
@@ -67,7 +129,11 @@ export const getObjKeyWithValue = (obj) => {
   }
   return newObj;
 };
-
+/**
+ *
+ * @param {Object} obj Object with array as values of the keys
+ * @returns One uniqe array from all the keys
+ */
 export const genrateObjKeyValueToArr = (obj) => {
   let arr = [];
 
@@ -77,12 +143,27 @@ export const genrateObjKeyValueToArr = (obj) => {
   return makeArrayToSet(arr);
 };
 
+/**
+ *
+ * @param {String} str
+ * @param {Number} pos
+ * @param {String} newStr
+ * @param {String} querySplit
+ * @returns The edited string of dataset by pos and the split query of the string
+ */
+
 export const editDataSet = (str, pos, newStr, querySplit = "-") => {
   const arrStr = str.split(querySplit)?.slice();
   arrStr[pos] = newStr;
   return arrStr.join(querySplit);
 };
 
+/**
+ *
+ * @param {Array} arr1
+ * @param {Array} arr2
+ * @returns  New Array with the common values of both array
+ */
 export const getSameValueBet2Arr = (arr1, arr2) => {
   let bigArr,
     smallArr,
@@ -103,10 +184,22 @@ export const getSameValueBet2Arr = (arr1, arr2) => {
     });
 
   return makeArrayToSet(newArr);
+  // return newArr;
 };
 
-export const getHowManyTimeElApperInArr = (chcekEl, arr) => {
-  return arr.filter((el) => el === chcekEl).length;
+/**
+ *
+ * @param {Any} check
+ * @param {Array} arr
+ * @returns The number of times the chcek parmater is display in the array
+ */
+export const getHowManyTimeElApperInArr = (check, arr) => {
+  return arr.filter((el) => el === check).length;
 };
-//settimeoutfun implement
+
+/**
+ *
+ * @param {Object} obj
+ * @returns  The deep clone object
+ */
 export const objDeepCopy = (obj) => JSON.parse(JSON.stringify(obj));
