@@ -154,7 +154,6 @@ const checkPawnMovement = (curIndex, newIndex, arrTD, color, relativeMoves) => {
     curPos: [rowNext, columnNext],
     NewIndex,
   } = getRowsColumns(curIndex, newIndex, arrTD);
-
   const rowDiff1 = Math.abs(row - rowNext) === 1;
   const rowDiff2 = Math.abs(row - rowNext) === 2;
   const columnDiff0 = Math.abs(column - columnNext) === 0;
@@ -162,15 +161,19 @@ const checkPawnMovement = (curIndex, newIndex, arrTD, color, relativeMoves) => {
   const firstRowMoveCheck = rowDiff1 && columnDiff0;
   const secRowMoveCheck = rowDiff2 && columnDiff0;
   const eatMoveCheck = rowDiff1 && columnDiff1;
+
   if (!(firstRowMoveCheck || secRowMoveCheck || eatMoveCheck)) return curIndex;
 
+  const nextChildIndex = color === "black" ? curIndex + 8 : curIndex - 8;
+
   const nextPileImg = getNextPileChild(NewIndex, curIndex, arrTD);
-
-  if (firstRowMoveCheck && !nextPileImg) return NewIndex;
-
-  if (secRowMoveCheck && !nextPileImg) return NewIndex;
-
   const colorNextPileImg = getDataFromDataSet(nextPileImg, 3);
+  const nextOnePileImg = getNextPileChild(nextChildIndex, curIndex, arrTD);
+  const colorOneNextPileImg = getDataFromDataSet(nextOnePileImg, 3);
+
+  if (firstRowMoveCheck && !nextPileImg) return newIndex;
+
+  if (secRowMoveCheck && !nextPileImg && !colorOneNextPileImg) return NewIndex;
 
   if (
     (eatMoveCheck && nextPileImg && color !== colorNextPileImg) ||
@@ -271,7 +274,7 @@ export const kingMove = (typePawn, arrTd, gameManageState, relativeMoves) => {
 
   if (curThreatInPos) {
     kingStateByColor.stateCheck = "check";
-  }
+  } else kingStateByColor.stateCheck = "";
 
   kingStateByColor.newPossibleMoves = newPossibleMove;
 

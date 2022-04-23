@@ -229,6 +229,7 @@ export class GameEvents {
     );
 
     kingState.relativeMoves = secKingRelativeMoves;
+    this.setGameState(gameState);
   }
 
   checkReset(initApp) {
