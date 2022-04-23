@@ -237,7 +237,7 @@ export class GameEvents {
     if (!(stateCheck === "checkmate" && confirm("rest?"))) return;
 
     this.setGameState(objDeepCopy(gameStateInital), true);
-    initApp();
+    initApp(true);
 
     return true;
   }
