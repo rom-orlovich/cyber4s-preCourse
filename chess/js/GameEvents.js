@@ -241,7 +241,6 @@ export class GameEvents {
   checkReset(render) {
     const gameState = this.getGameState();
     const stateCheck = gameState.kingState[gameState.activePlayer].stateCheck;
-
     if (!(stateCheck === "checkmate" && confirm("rest?"))) return;
     render();
     this.setGameState(objDeepCopy(gameStateInital), true);
