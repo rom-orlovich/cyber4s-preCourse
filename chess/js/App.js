@@ -13,6 +13,7 @@ const gameEvents = new GameEvents();
 const initApp = () => {
   chess.render();
   const [getGameState, setGameState] = gameManageState;
+  console.log(getGameState());
   gameEvents.initEvents(
     chess.tdBoardChess,
     [getGameState, setGameState],

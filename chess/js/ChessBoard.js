@@ -61,9 +61,7 @@ export class ChessBoard {
    *
    * @param {Array} gameManageState The array which within the getState and the setState function of the app;
    */
-  changeDirBoard(gameManageState) {
-    const [getGameState] = gameManageState;
-    const gameState = getGameState();
+  changeDirBoard(gameState) {
     gameState.activePlayer === "black"
       ? this.parentEl?.classList.add("rotate180")
       : this.parentEl?.classList.remove("rotate180");

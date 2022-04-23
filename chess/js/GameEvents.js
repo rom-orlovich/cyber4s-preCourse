@@ -56,11 +56,11 @@ export class GameEvents {
         const dataSetInfo = target.dataset.typePawn;
         if (!dataSetInfo) return;
         this.curClickDataSetInfo = dataSetInfo;
-
         const [curIndex, type, _, targetColor] = dataSetInfo.split("-");
         const gameState = this.getGameState();
         const kingState = gameState.kingState[targetColor];
         if (targetColor !== gameState.activePlayer) return;
+
         const isInDangerPlace = kingState.threats.some(
           (el) => el === curIndex * 1
         );
@@ -71,10 +71,12 @@ export class GameEvents {
         ) => {
           this.handleAfterClick(newDataSetInfo, posibleMovementsObj);
           if (this.checkReset(initApp)) return;
-          bool && changeDirFun(this.gameManageState);
-          this.setGameState(gameState);
+
+          bool && changeDirFun(this.getGameState());
+          this.setGameState(this.getGameState());
         };
         if (isInDangerPlace && type !== "king") return;
+
         this.handlerClickMovement(dataSetInfo, handleAfterClick);
       },
       "#container_ChessBoard"
@@ -94,6 +96,7 @@ export class GameEvents {
         const isInDangerPlace = kingState.threats.some(
           (el) => el === curIndex * 1
         );
+
         if (isInDangerPlace && type !== "king") return;
         this.handleMouseOver(dataSetInfo, this.dataTd);
       },
@@ -137,7 +140,6 @@ export class GameEvents {
       this.getGameState,
       this.setGameState,
     ]);
-
     handleClickPawn(
       dataSetInfo,
       possibleMoves,
@@ -150,12 +152,11 @@ export class GameEvents {
   handleAfterClick(newDataSetInfo, posibleMovementsObj) {
     const gameState = this.getGameState();
     const [index, type, _, color] = newDataSetInfo.split("-");
-
     this.checkCheckMate(posibleMovementsObj);
     this.setAfterPlayerTurn(gameState.activePlayer);
-
     this.setGameState(gameState);
   }
+
   checkCheckMate(posibleMovementsObj) {
     const gameState = this.getGameState();
     const secColor = this.setSecColor(gameState.activePlayer);
@@ -175,6 +176,7 @@ export class GameEvents {
       this.dataTd
     );
     const typePawnDataSecPlayer = getDataAboutPawns(secColor, this.dataTd);
+
     const { kingRelativeMoves: secKingRelativeMoves, kingEl: SecKingColorEl } =
       getKingRelativePos(secColor, this.dataTd);
 
@@ -207,29 +209,36 @@ export class GameEvents {
       possibleMove,
       false
     );
+
     if (
       kingState.stateCheck === "check" &&
-      kingCurPossibleMove.length === 1 &&
-      defenseMove.length === 1
+      kingCurPossibleMove.length === 0 &&
+      defenseMove.length === 0
     ) {
       alert("checkmate");
       kingState.stateCheck = "checkmate";
       this.setGameState(gameState);
     } else if (kingState.stateCheck === "check") {
+      kingState.stateCheck = "";
       alert("check");
     }
+
     kingState.possibleMoves = checkKingPossibleMove(
       threatsArr,
       secKingRelativeMoves
     );
+
     kingState.relativeMoves = secKingRelativeMoves;
   }
+
   checkReset(initApp) {
     const gameState = this.getGameState();
     const stateCheck = gameState.kingState[gameState.activePlayer].stateCheck;
     if (!(stateCheck === "checkmate" && confirm("rest?"))) return;
-    initApp();
+
     this.setGameState(objDeepCopy(gameStateInital), true);
+    initApp();
+
     return true;
   }
 }
