@@ -1,4 +1,4 @@
-import { gameStateInital } from "./App.js";
+import { gameStateInital } from "./gameState.js";
 import {
   checkKingPossibleMove,
   checkPawnThreatMove,
@@ -7,18 +7,8 @@ import {
   handleClickPawn,
   handlePosibleMovment,
 } from "./Helpers/handleEventFun.js";
-import {
-  selectElement,
-  addEventListenerByQuery,
-  getObjKeyWithValue,
-  genrateObjKeyValueToArr,
-  toLog,
-  objDeepCopy,
-} from "./Helpers/utilitesFun.js";
-import {
-  getDataFromDataSet,
-  getKingRelativePos,
-} from "./pawnsMovment/pawnMovementHelpers.js";
+import { addEventListenerByQuery, objDeepCopy } from "./Helpers/utilitesFun.js";
+import { getKingRelativePos } from "./pawnsMovment/pawnMovementHelpers.js";
 import { posibleMovementsObj } from "./pawnsMovment/posibleMovmentsRes.js";
 
 export class GameEvents {
@@ -55,7 +45,7 @@ export class GameEvents {
   }
 
   initEvents(dataTd, gameManageState, controlFunction) {
-    const [changeDirFun, render] = controlFunction;
+    const [changeDirFun, initApp] = controlFunction;
     this.initChessBoardControl(dataTd, gameManageState);
 
     addEventListenerByQuery(
@@ -79,8 +69,8 @@ export class GameEvents {
           bool = true
         ) => {
           this.handleAfterClick(newDataSetInfo, posibleMovementsObj);
-          if (this.checkReset(render)) return;
-          bool && changeDirFun(gameState.activePlayer);
+          if (this.checkReset(initApp)) return;
+          bool && changeDirFun(this.gameManageState);
           this.setGameState(gameState);
           console.log(gameState);
         };
@@ -157,12 +147,12 @@ export class GameEvents {
     );
   }
 
-  handleAfterClick(newDataSetInfo, posibleMovementsObj, render) {
+  handleAfterClick(newDataSetInfo, posibleMovementsObj, initApp) {
     const gameState = this.getGameState();
     const [index, type, _, color] = newDataSetInfo.split("-");
     this.checkCheckMate(posibleMovementsObj);
     this.setAfterPlayerTurn(gameState.activePlayer);
-    // if (this.checkGame(render)) return;
+    // if (this.checkGame(initApp)) return;
     this.setGameState(gameState);
     console.log(gameState);
   }
@@ -238,22 +228,12 @@ export class GameEvents {
       secKingRelativeMoves
     );
   }
-  checkReset(render) {
+  checkReset(initApp) {
     const gameState = this.getGameState();
     const stateCheck = gameState.kingState[gameState.activePlayer].stateCheck;
     if (!(stateCheck === "checkmate" && confirm("rest?"))) return;
-    render();
+    initApp();
     this.setGameState(objDeepCopy(gameStateInital), true);
     return true;
   }
 }
-
-// const threatData = getSameValueBet2Arr(possibleMoves, kingRelativeMoves);
-// if (threatData.length > 0) {
-//   kingState.threat = threatData; // אולי צריך לנקות
-//   if (kingState.threat.find((el) => el === kingState.pos)) {
-//     kingState.stateCheck = "check";
-//     alert("check");
-//   }
-//   // gameState.lastPossibleMove = possibleMoves;
-// }

@@ -2,9 +2,15 @@ import { dataImg } from "./chessPawnsData.js";
 import { createEl, createImgHtml } from "./utilitesFun.js";
 
 export const SIZE = 8;
-
-export const checkColor = (row, setFirst, setSec) =>
-  row === 6 || row === 7 ? setFirst : setSec;
+/**
+ *
+ * @param {Number} row Get the row number
+ * @param {String} firstColor
+ * @param {*} secColor
+ * @returns The correct color according to the row number 6/7 white 0/1 black
+ */
+export const checkColor = (row, firstColor, secColor) =>
+  row === 6 || row === 7 ? firstColor : secColor;
 
 export const checkPawnType = (indexPawns) => {
   if (indexPawns === 0 || indexPawns === SIZE - 1) return "rook";

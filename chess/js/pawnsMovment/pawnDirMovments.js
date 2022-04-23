@@ -120,6 +120,7 @@ export const pawnMove = (
       newIndex + 7 === curIndex ||
       newIndex - 9 === curIndex ||
       newIndex + 9 === curIndex;
+
     const td = arrTd[newIndex];
     if (!td) return curIndex;
     const img = td?.firstElementChild;

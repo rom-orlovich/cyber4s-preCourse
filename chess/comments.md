@@ -8,3 +8,10 @@
 //
 // todo: save the state of possible moves arr of the last movement and the place of the king of the both players and connect to possible moves of the king
 // todo:
+
+// ButtonControlInit(chess.changeDirBoard.bind(chess)); // I turned off the button control
+
+// movePawnToOtherPile("52-pawn-4-white-0", [4, 4]);
+// movePawnToOtherPile("59-queen-3-white", [5, 5]);
+// movePawnToOtherPile("61-bishop-5-white", [4, 2]);
+// movePawnToOtherPile("52-pawn-4-white-0", [4, 4]);

@@ -61,7 +61,9 @@ export const movePawnToOtherPile = (pawnType, newPos) => {
   const choosenTD = selectElement(`td[data-index-pos*="${newPos}"]`);
 
   if (!(choosenImg && choosenTD)) return;
+  if (color === getDataFromDataSet(choosenTD.firstElementChild, 3)) return;
   if (choosenImg.parentNode === choosenTD) return;
+
   const dataSetImg = choosenImg.dataset.typePawn;
   const indexPile = choosenTD.dataset.indexPile;
   choosenImg.dataset.typePawn = editDataSet(dataSetImg, 0, indexPile);
