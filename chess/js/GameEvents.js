@@ -149,6 +149,8 @@ export class GameEvents {
   handleAfterClick(newDataSetInfo, posibleMovementsObj) {
     const gameState = this.getGameState();
     const [index, type, _, color] = newDataSetInfo.split("-");
+
+    // console.log(gameState.kingState[this.setSecColor(color)]);
     this.checkCheckMate(posibleMovementsObj);
     this.setAfterPlayerTurn(gameState.activePlayer);
 
@@ -175,6 +177,7 @@ export class GameEvents {
     const typePawnDataSecPlayer = getDataAboutPawns(secColor, this.dataTd);
     const { kingRelativeMoves: secKingRelativeMoves, kingEl: SecKingColorEl } =
       getKingRelativePos(secColor, this.dataTd);
+
     const [kingPos] = SecKingColorEl.dataset.typePawn.split("-");
 
     const threatsArr = checkPossibleThreatOfKing(
@@ -189,17 +192,15 @@ export class GameEvents {
       kingPos * 1
     );
 
-    // const { kingRelativeMoves: curKingRelativeMoves, kingEl: curKingColoerEl } =
-    //   getKingRelativePos(secColor, this.dataTd);
-
     kingState.threats = threatsArr;
+
     this.setGameState(gameState);
 
     const kingCurPossibleMove = possibleMove(
       SecKingColorEl.dataset.typePawn,
       false
     );
-    console.log(threatPawnMoves);
+
     const defenseMove = checkPossibleThreatOfKing(
       typePawnDataSecPlayer,
       threatPawnMoves,
@@ -211,11 +212,11 @@ export class GameEvents {
 
     // console.log(kingState.threats);
     // console.log("checkCheckMate", secColor, kingState);
-    console.log(defenseMove, kingCurPossibleMove, kingState.stateCheck);
+    // console.log(defenseMove, kingCurPossibleMove, kingState.stateCheck);
     if (
       kingState.stateCheck === "check" &&
       kingCurPossibleMove.length === 1 &&
-      defenseMove.length === 0
+      defenseMove.length === 1
     ) {
       alert("checkmate");
       kingState.stateCheck = "checkmate";
@@ -223,12 +224,11 @@ export class GameEvents {
     } else if (kingState.stateCheck === "check") {
       alert("check");
     }
-
-    kingState.relativeMoves = secKingRelativeMoves;
     kingState.possibleMoves = checkKingPossibleMove(
       threatsArr,
       secKingRelativeMoves
     );
+    kingState.relativeMoves = secKingRelativeMoves;
   }
   checkReset(initApp) {
     const gameState = this.getGameState();

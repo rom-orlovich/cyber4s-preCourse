@@ -33,7 +33,13 @@ export const breakLoop = (change, curIndex, arrTd, color, relativeMoves) => {
   if (relativeMoves && getColorDataSet === color) return true;
   if (getColorDataSet !== color || getColorDataSet === color) return true;
 };
-const obliquePossibleMovment = (curIndex, change, arr, color) => {
+const obliquePossibleMovment = (
+  curIndex,
+  change,
+  arr,
+  color,
+  relativeMoves
+) => {
   const {
     newPos: [row, column],
     curPos: [rowNext, columnNext],
@@ -46,11 +52,19 @@ const obliquePossibleMovment = (curIndex, change, arr, color) => {
 
   const nextPileImg = getNextPileChild(NewIndex, curIndex, arr);
   const colorNextPileImg = getDataFromDataSet(nextPileImg, 3);
+  if (colorNextPileImg === color && relativeMoves) return NewIndex;
   if (nextPileImg && colorNextPileImg === color) return curIndex;
+
   return NewIndex;
 };
 
-const verticalPossibleMovment = (curIndex, change, arr, color) => {
+const verticalPossibleMovment = (
+  curIndex,
+  change,
+  arr,
+  color,
+  relativeMoves
+) => {
   const {
     newPos: [row, column],
     curPos: [rowNext, columnNext],
@@ -66,6 +80,8 @@ const verticalPossibleMovment = (curIndex, change, arr, color) => {
   }
   const nextPileImg = getNextPileChild(NewIndex, curIndex, arr);
   const colorNextPileImg = getDataFromDataSet(nextPileImg, 3);
+
+  if (relativeMoves && colorNextPileImg === color) return NewIndex;
   if (nextPileImg && colorNextPileImg === color) return curIndex;
 
   return NewIndex;
@@ -89,7 +105,14 @@ export const bishopMove = (
         1,
         lengthLoop,
         1,
-        (i) => obliquePossibleMovment(curIndex, i * change, arrTd, color),
+        (i) =>
+          obliquePossibleMovment(
+            curIndex,
+            i * change,
+            arrTd,
+            color,
+            relativeMoves
+          ),
         (i) => breakLoop(i * change, curIndex, arrTd, color, relativeMoves)
       );
 };
@@ -113,7 +136,14 @@ export const rookMove = (
         1,
         lengthLoop,
         1,
-        (i) => verticalPossibleMovment(curIndex, i * change, arrTd, color),
+        (i) =>
+          verticalPossibleMovment(
+            curIndex,
+            i * change,
+            arrTd,
+            color,
+            relativeMoves
+          ),
         (i) => breakLoop(i * change, curIndex, arrTd, color, relativeMoves)
       );
 };

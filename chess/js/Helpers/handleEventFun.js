@@ -95,8 +95,8 @@ const getTheMovmentUntilTheKing = (posPawn, kingPos, arr) => {
     Math.max(posPawn, kingPos),
     i
   );
-
-  return makeArrayToSet(arrS);
+  return arrS;
+  // return makeArrayToSet(arrS);
 };
 
 export const checkPossibleThreatOfKing = (
