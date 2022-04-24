@@ -185,15 +185,15 @@ const checkPawnMovement = (curIndex, newIndex, arrTD, color, relativeMoves) => {
 };
 
 export const pawnMove = (
-  pawnType,
+  typePawn,
   curIndex,
   arrTD,
   boardDir,
   color,
   relativeMoves
 ) => {
-  if (pawnType.type !== "pawn") return [];
-  let numMovesPawn = checkNumMovesOfPawn(pawnType.pawnMoves);
+  if (typePawn.type !== "pawn") return [];
+  let numMovesPawn = checkNumMovesOfPawn(typePawn.pawnMoves);
   let arrChanges = cheakBoardDir(boardDir, color, [7, 9, ...numMovesPawn]);
   const arr = arrChanges.map((change) => {
     return checkPawnMovement(

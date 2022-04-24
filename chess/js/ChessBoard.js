@@ -2,7 +2,7 @@ import {
   setPawnImg,
   SIZE,
   checkColor,
-  checkPawnType,
+  checktypePawn,
 } from "./Helpers/ChessBoardHelpers.js";
 
 export class ChessBoard {
@@ -29,7 +29,7 @@ export class ChessBoard {
 
   //the more powerfull ones: queen, rook,bishop and ect.
   setOtherPawns(td, pawnIndex, indexPile, color, moveTimes = undefined) {
-    let typePawn = checkPawnType(pawnIndex);
+    let typePawn = checktypePawn(pawnIndex);
     setPawnImg(td, typePawn, pawnIndex, indexPile, color, moveTimes);
   }
 

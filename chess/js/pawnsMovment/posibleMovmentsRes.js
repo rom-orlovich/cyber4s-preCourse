@@ -7,27 +7,35 @@ import {
   rookMove,
 } from "./pawnDirMovments.js";
 
+/**
+ *
+ * @param {String} typePawn The typePawn dataset of pawn
+ * @param {Array} arrTD Array of table's TD
+ * @param {Array} gameManageState Array of getState and setState functions of the app's state
+ * @param {Boolean} relativeMoves If is true turns the possible moves to be relative instead absolute
+ * @returns Array of the pawn's possible movements according to his type.
+ */
 export const posibleMovementsObj = (
-  pawnType,
-  arrTd,
+  typePawn,
+  arrTD,
   gameManageState,
   relativeMoves = false
 ) => {
-  const pawnTypeArr = pawnType.split("-");
-  const [index, type, _, color] = pawnTypeArr;
-  const pawnMoves = pawnTypeArr[4];
+  const typePawnArr = typePawn.split("-");
+  const [index, type, _, color] = typePawnArr;
+  //Pawns have uniqe data in typePawn dataset of thier number times that they moved
+  const pawnMoves = typePawnArr[4];
   const [getGameState, setGameState] = gameManageState;
   const gameState = getGameState();
   const { boardDir } = gameState;
   const Index = index * 1;
-  const [row] = arrTd[Index]?.dataset.indexPos.split(",");
 
   const res = {
     pawn: [
       ...pawnMove(
         { type, pawnMoves },
         Index,
-        arrTd,
+        arrTD,
         boardDir,
         color,
         relativeMoves
@@ -35,39 +43,39 @@ export const posibleMovementsObj = (
     ],
 
     rook: [
-      ...rookMove(type, 8, Index, -1, arrTd, color, relativeMoves),
-      ...rookMove(type, 8, Index, 1, arrTd, color, relativeMoves),
-      ...rookMove(type, 8, Index, 8, arrTd, color, relativeMoves),
-      ...rookMove(type, 8, Index, -8, arrTd, color, relativeMoves),
+      ...rookMove(type, 8, Index, -1, arrTD, color, relativeMoves),
+      ...rookMove(type, 8, Index, 1, arrTD, color, relativeMoves),
+      ...rookMove(type, 8, Index, 8, arrTD, color, relativeMoves),
+      ...rookMove(type, 8, Index, -8, arrTD, color, relativeMoves),
     ],
 
     knight: [
-      ...knightMove(type, Index, [10, 17], arrTd, color, relativeMoves),
-      ...knightMove(type, Index, [6, 15], arrTd, color, relativeMoves),
-      ...knightMove(type, Index, [-6, -15], arrTd, color, relativeMoves),
-      ...knightMove(type, Index, [-10, -17], arrTd, color, relativeMoves),
+      ...knightMove(type, Index, [10, 17], arrTD, color, relativeMoves),
+      ...knightMove(type, Index, [6, 15], arrTD, color, relativeMoves),
+      ...knightMove(type, Index, [-6, -15], arrTD, color, relativeMoves),
+      ...knightMove(type, Index, [-10, -17], arrTD, color, relativeMoves),
     ],
 
     bishop: [
-      ...bishopMove(type, 8, Index, -9, arrTd, color, relativeMoves),
-      ...bishopMove(type, 8, Index, -7, arrTd, color, relativeMoves),
-      ...bishopMove(type, 8, Index, 9, arrTd, color, relativeMoves),
-      ...bishopMove(type, 8, Index, 7, arrTd, color, relativeMoves),
+      ...bishopMove(type, 8, Index, -9, arrTD, color, relativeMoves),
+      ...bishopMove(type, 8, Index, -7, arrTD, color, relativeMoves),
+      ...bishopMove(type, 8, Index, 9, arrTD, color, relativeMoves),
+      ...bishopMove(type, 8, Index, 7, arrTD, color, relativeMoves),
     ],
 
     queen: [
-      ...bishopMove(type, 8, Index, -9, arrTd, color, relativeMoves),
-      ...bishopMove(type, 8, Index, -7, arrTd, color, relativeMoves),
-      ...bishopMove(type, 8, Index, 9, arrTd, color, relativeMoves),
-      ...bishopMove(type, 8, Index, 7, arrTd, color, relativeMoves),
-      ...rookMove(type, 8, Index, -1, arrTd, color, relativeMoves),
-      ...rookMove(type, 8, Index, 1, arrTd, color, relativeMoves),
-      ...rookMove(type, 8, Index, 8, arrTd, color, relativeMoves),
+      ...bishopMove(type, 8, Index, -9, arrTD, color, relativeMoves),
+      ...bishopMove(type, 8, Index, -7, arrTD, color, relativeMoves),
+      ...bishopMove(type, 8, Index, 9, arrTD, color, relativeMoves),
+      ...bishopMove(type, 8, Index, 7, arrTD, color, relativeMoves),
+      ...rookMove(type, 8, Index, -1, arrTD, color, relativeMoves),
+      ...rookMove(type, 8, Index, 1, arrTD, color, relativeMoves),
+      ...rookMove(type, 8, Index, 8, arrTD, color, relativeMoves),
 
-      ...rookMove(type, 8, Index, -8, arrTd, color, relativeMoves),
+      ...rookMove(type, 8, Index, -8, arrTD, color, relativeMoves),
     ],
 
-    king: kingMove(pawnTypeArr, arrTd, gameManageState, relativeMoves),
+    king: kingMove(typePawnArr, arrTD, gameManageState, relativeMoves),
   };
 
   return [...res[type]];

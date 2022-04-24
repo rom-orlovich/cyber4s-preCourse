@@ -53,8 +53,8 @@ export const checkNumMovesOfPawn = (numMoves) => {
   return NumMoves === 0 ? [8, 16] : [8];
 };
 
-export const movePawnToOtherPile = (pawnType, newPos) => {
-  let [index, type, number, color] = pawnType.split("-");
+export const movePawnToOtherPile = (typePawn, newPos) => {
+  let [index, type, number, color] = typePawn.split("-");
   const choosenImg = selectElement(
     `img[data-type-pawn*="${index}-${type}-${number}-${color}"]`
   );

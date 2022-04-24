@@ -4,7 +4,7 @@ import {
 } from "../pawnsMovment/pawnMovementHelpers.js";
 
 export const handlePosibleMovment = (
-  pawnType,
+  typePawn,
   posibleMoves,
   arrTD,
   gameManageState,
@@ -18,13 +18,13 @@ export const handlePosibleMovment = (
 };
 
 export const handleClickPawn = (
-  pawnType,
+  typePawn,
   posibleMoves,
   arrTD,
   handleAfterClick,
   gameManageState
 ) => {
-  let [CurIndex, type, _, color] = pawnType.split("-");
+  let [CurIndex, type, _, color] = typePawn.split("-");
   const [getGameState, setGameState] = gameManageState;
   const gameState = getGameState();
   posibleMoves.forEach((el) => {
@@ -35,7 +35,7 @@ export const handleClickPawn = (
       const indexPosTDClick = target?.dataset?.indexPos;
 
       if (!target) return;
-      let dataInfo = movePawnToOtherPile(pawnType, indexPosTDClick);
+      let dataInfo = movePawnToOtherPile(typePawn, indexPosTDClick);
 
       if (!dataInfo) return;
       if (type === "pawn") editDatasSetByQuery(el, 4, "1");

@@ -88,7 +88,7 @@ export class GameEvents {
          *
          * @param {String} newDataSetInfo The new typePawn dataset of pawn
          * @param {Function} posibleMovementsObj
-         * @param {Boolean} bool If it is true, change the diraction of the board after each
+         * @param {Boolean} bool If it is true, change the direction of the board after each
          * move of player
          * @returns undefined if initApp in checkReset fucntion is excauted
          */
