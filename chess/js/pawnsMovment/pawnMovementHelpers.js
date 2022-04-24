@@ -4,6 +4,14 @@ import {
   makeArrayToSet,
 } from "../Helpers/utilitesFun.js";
 
+/**
+ *
+ * @param {Element} el
+ * @param {Number} pos
+ * @param {String} datasetName
+ * @param {String} split Split query of the string
+ * @returns The choosen data from the dataset accroding the pos of the string
+ */
 export const getDataFromDataSet = (
   el,
   pos,
@@ -11,18 +19,34 @@ export const getDataFromDataSet = (
   split = "-"
 ) => el && el.dataset?.[datasetName]?.split(split)[pos];
 
+/**
+ *
+ * @param {string} queryPos Select element from the dom according to the query of typePawn dataset 
+ * @param {Number} posInStrArr Which part of the string need to changes in the dataset
+ * @param {String} datasetName 
+ * @param {string} newstr
+
+ */
+
 export const editDatasSetByQuery = (
   queryPos,
   posInStrArr,
-  newstr,
+  newStr,
   datasetName = "typePawn"
 ) => {
   const el = selectElement(`img[data-type-pawn*="${queryPos}"]`);
   const dataSetImg = el?.dataset[datasetName];
   if (!el) return;
-  el.dataset[datasetName] = editDataSet(dataSetImg, posInStrArr, newstr);
+  el.dataset[datasetName] = editDataSet(dataSetImg, posInStrArr, newStr);
 };
 
+/**
+ *
+ * @param {Number} boardDir
+ * @param {String} color
+ * @param {Number} changes
+ * @returns
+ */
 export const cheakBoardDir = (boardDir, color, changes) => {
   return changes?.map((el) => {
     return (boardDir === 1 && color === "white") ||
