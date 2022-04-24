@@ -3,7 +3,7 @@ export class state {
   /**
    *
    * @param {Object} state Get the new state we want to update
-   * @param {Object} initState Get initState we want to init the state of the program
+   * @param {Boolean} initState Get initState we want to init the state of the program
    * @returns undefined if initState is not defined
    */
 

@@ -59,7 +59,7 @@ export class ChessBoard {
 
   /**
    *
-   * @param {Array} gameManageState The array which within the getState and the setState function of the app;
+   * @param {Object} gameState The array which within the getState and the setState function of the app;
    */
   changeDirBoard(gameState) {
     gameState.activePlayer === "black"

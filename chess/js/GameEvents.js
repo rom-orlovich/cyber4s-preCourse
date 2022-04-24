@@ -158,10 +158,14 @@ export class GameEvents {
   }
 
   checkCheckMate(posibleMovementsObj) {
+    //Get current state
     const gameState = this.getGameState();
+
+    // Get the color of the opponent and the state of his king
     const secColor = this.setSecColor(gameState.activePlayer);
     const kingState = gameState.kingState[secColor];
 
+    //Declare an improve possible move function that return the relative moves of the pawns
     const possibleMove = (newDataSetInfo, relative = true) => {
       return posibleMovementsObj(
         newDataSetInfo,
@@ -171,44 +175,59 @@ export class GameEvents {
       );
     };
 
+    //Create the datasets of typepawn array from the current table of both players pawns
+    //Contains all the data about the pawns of the both players pawns
     const typePawnDataActivePlayer = getDataAboutPawns(
       gameState.activePlayer,
       this.dataTd
     );
     const typePawnDataSecPlayer = getDataAboutPawns(secColor, this.dataTd);
 
+    // Get the relative moves of the king and the king img element and use his
+    //typepawn in order to get the data about him.
+    // Assign the king relative moves to sec color king state.
     const { kingRelativeMoves: secKingRelativeMoves, kingEl: SecKingColorEl } =
       getKingRelativePos(secColor, this.dataTd);
-
+    kingState.relativeMoves = secKingRelativeMoves;
     const [kingPos] = SecKingColorEl.dataset.typePawn.split("-");
 
-    const threatsArr = checkPossibleThreatOfKing(
-      typePawnDataActivePlayer,
-      secKingRelativeMoves,
-      possibleMove
-    );
-
+    // Get threats moves array  of the pawns that threat on the king
     const threatPawnMoves = checkPawnThreatMove(
       typePawnDataActivePlayer,
       possibleMove,
       kingPos * 1
     );
 
-    kingState.threats = threatsArr;
+    //Get array of threats on the sec king
+    const threatsArr = checkPossibleThreatOfKing(
+      typePawnDataActivePlayer,
+      secKingRelativeMoves,
+      possibleMove
+    );
 
+    //Assignment the sec color kingstate threats and update the state
+    kingState.threats = threatsArr;
     this.setGameState(gameState);
 
+    //Get the current possible move of the sec color kings
     const kingCurPossibleMove = possibleMove(
       SecKingColorEl.dataset.typePawn,
       false
     );
 
+    //Get the calculated defense moves of other pawns of the sec color in order
+    //to cancel the threats and the check.
     const defenseMove = checkPossibleThreatOfKing(
       typePawnDataSecPlayer,
       threatPawnMoves,
       possibleMove,
       false
     );
+
+    //if the state chcek of the sec color king is 'check' and
+    // his current possible moves are zero and there is not defense moves that are possible
+    //  so the active player is win and the state is 'checkmate'.
+    //  otherwise is 'check' is cancel.
 
     if (
       kingState.stateCheck === "check" &&
@@ -223,12 +242,13 @@ export class GameEvents {
       alert("check");
     }
 
+    //if the game continue ,assign the new possible move to the sec color king state
+    //And the new game state
     kingState.possibleMoves = checkKingPossibleMove(
       threatsArr,
       secKingRelativeMoves
     );
 
-    kingState.relativeMoves = secKingRelativeMoves;
     this.setGameState(gameState);
   }
 
