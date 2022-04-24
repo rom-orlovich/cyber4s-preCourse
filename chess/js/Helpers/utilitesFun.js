@@ -60,7 +60,7 @@ export const selectAllElements = (query, scope = document) => {
  *
  * @param {String} nameEvent
  * @param {Function} handler The callback function of the event listener
- * @param {String} query
+ * @param {String} query Which element search in the querySelector
  * @returns The result element which the event listener attach to it.
  */
 export const addEventListenerByQuery = (nameEvent, handler, query) => {
@@ -73,7 +73,7 @@ export const addEventListenerByQuery = (nameEvent, handler, query) => {
  *
  * @param {String} nameEvent
  * @param {Function} handler The callback function of the event listener
- * @param {String} query
+ * @param {String} query Which element search in the querySelector
  * @returns The result element which the event listener attach to it.
  */
 export const removeEventListenerByQuery = (nameEvent, handler, query) => {
