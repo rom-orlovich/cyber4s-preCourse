@@ -1,4 +1,3 @@
-import { makeArray, makeArrayToSet } from "../Helpers/utilitesFun.js";
 import {
   bishopMove,
   kingMove,
@@ -23,11 +22,8 @@ export const posibleMovementsObj = (
 ) => {
   const typePawnArr = typePawn.split("-");
   const [index, type, _, color] = typePawnArr;
-  //Pawns have uniqe data in typePawn dataset of thier number times that they moved
+  //Pawns have uniqe number data in thier typePawn dataset how many time they moved
   const pawnMoves = typePawnArr[4];
-  const [getGameState, setGameState] = gameManageState;
-  const gameState = getGameState();
-  const { boardDir } = gameState;
   const Index = index * 1;
 
   const res = {
@@ -36,7 +32,7 @@ export const posibleMovementsObj = (
         { type, pawnMoves },
         Index,
         arrTD,
-        boardDir,
+
         color,
         relativeMoves
       ),

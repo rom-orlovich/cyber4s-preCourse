@@ -10,7 +10,7 @@ import {
   checkPossibleThreatOfKing,
 } from "./Helpers/checkKingStatusHelpers.js";
 import { addEventListenerByQuery, objDeepCopy } from "./Helpers/utilitesFun.js";
-import { getKingRelativePos } from "./pawnsMovment/pawnMovementHelpers.js";
+import { getKingRelativePos } from "./Helpers/checkKingStatusHelpers.js";
 import { posibleMovementsObj } from "./pawnsMovment/posibleMovmentsRes.js";
 
 export class GameEvents {

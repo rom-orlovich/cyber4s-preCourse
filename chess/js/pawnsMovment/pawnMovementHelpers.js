@@ -42,36 +42,42 @@ export const editDatasSetByQuery = (
 
 /**
  *
- * @param {Number} boardDir
- * @param {String} color
- * @param {Number} changes
- * @returns
+ * @param {String} color of the pawn
+ * @param {Number} changes Arr of the possible changes in movement of the pawn
+ * @returns New change movements array- negetive or positive number according the color of the pawn
  */
-export const cheakBoardDir = (boardDir, color, changes) => {
-  return changes?.map((el) => {
-    return (boardDir === 1 && color === "white") ||
-      (boardDir === 2 && color === "white")
-      ? el * -1
-      : (boardDir === 1 && color === "black") ||
-        (boardDir === 2 && color === "black")
-      ? el
-      : 0;
-  });
-};
+export const cheakBoardDir = (color, changes) =>
+  changes.map((el) => (color === "white" ? el * -1 : el));
 
-export const checkIligalePos = (newIndex, curIndex, arr) => {
-  let length = arr.length - 1;
+/**
+ *
+ * @param {Number} newIndex
+ * @param {Number} curIndex
+ * @param {Array} arrTD
+ * @returns The new normalize index pos
+ */
+export const checkillegalPos = (curIndex, newIndex, arrTD) => {
+  let length = arrTD.length - 1;
   let NewIndex = newIndex * 1;
   return NewIndex > length || NewIndex < 0 ? curIndex : NewIndex;
 };
 
-export const getNextPileChild = (index, curIndex, arr) =>
-  arr[checkIligalePos(index, curIndex, arr)]?.firstElementChild;
+/**
+ *
+ * @param {Number} newIndex
+ * @param {Number} curIndex
+ * @param {Array} arrTD
+ * @returns First element child of new normalize index pos
+ */
 
-export const checkTheBoarderOfPile = (curIndex, change, color, arr) => {
-  const nextPile = getNextPileChild(curIndex - 7, curIndex, arr);
-  return nextPile && getDataFromDataSet(nextPile, 3) !== color;
-};
+export const getNextPileChild = (curIndex, newIndex, arrTD) =>
+  arrTD[checkillegalPos(curIndex, newIndex, arrTD)]?.firstElementChild;
+
+/**
+ *
+ * @param {Number} numMoves The current num moves of regular pawn. Can be 0 or 1.
+ * @returns Array of the forward possible movement of the pawn
+ */
 export const checkNumMovesOfPawn = (numMoves) => {
   const NumMoves = numMoves * 1;
   return NumMoves === 0 ? [8, 16] : [8];
@@ -79,20 +85,34 @@ export const checkNumMovesOfPawn = (numMoves) => {
 
 export const movePawnToOtherPile = (typePawn, newPos) => {
   let [index, type, number, color] = typePawn.split("-");
+
+  //Select the img element by the data query in typePawn dataset
+  //Select the new td element by the newPos query
   const choosenImg = selectElement(
     `img[data-type-pawn*="${index}-${type}-${number}-${color}"]`
   );
   const choosenTD = selectElement(`td[data-index-pos*="${newPos}"]`);
 
+  //If there are no td nor img element exit from the function
+  //If the player click in the sec click on td within element with the same color
+  // exit from the function
+  //If the player click on the same pile with img element exit from the function
   if (!(choosenImg && choosenTD)) return;
   if (color === getDataFromDataSet(choosenTD.firstElementChild, 3)) return;
   if (choosenImg.parentNode === choosenTD) return;
 
+  //Get the data about typePawn dataset of the img which was clicked
+  //Get the data about the indexPile dataset of the td which was clicked
   const dataSetImg = choosenImg.dataset.typePawn;
   const indexPile = choosenTD.dataset.indexPile;
+
+  //Change the curPos index in the typePawn dataset  of img  with the pile's index pile
   choosenImg.dataset.typePawn = editDataSet(dataSetImg, 0, indexPile);
   const img = choosenTD.firstElementChild;
 
+  //If no img in the choosen td so just append the curImg to the choosen td
+  //Else if there is img with different color in the choosen td remove that img
+  // and append the new img.
   if (!img) {
     choosenTD.appendChild(choosenImg);
   } else {
@@ -103,26 +123,3 @@ export const movePawnToOtherPile = (typePawn, newPos) => {
 
   return choosenImg.dataset.typePawn;
 };
-
-export const getKingRelativePos = (color, arrTd) => {
-  const getKingImg = selectElement(
-    `img[data-type-pawn*="king"][data-type-pawn*="${color}"]`
-  );
-  if (!getKingImg) return;
-  const typePawn = getKingImg.dataset.typePawn;
-  let kingMoves = [-9, -7, 9, 7, -1, 1, 8, -8];
-  const [curIndex, type, _] = typePawn.split("-");
-
-  kingMoves = kingMoves.map((el) => {
-    const CurIndex = curIndex * 1;
-    return checkIligalePos(CurIndex + el, CurIndex, arrTd);
-  });
-  return { kingEl: getKingImg, kingRelativeMoves: makeArrayToSet(kingMoves) };
-};
-
-// this.gameState.kingState[secColor].threat = getKingRelativePos(
-//   //       secColor
-//   //     ).map((el, i) => {
-//   // if (el === possibleMoves[i])
-//   // return el;
-//   //     });

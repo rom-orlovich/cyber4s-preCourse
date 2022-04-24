@@ -19,6 +19,7 @@ export const checktypePawn = (indexPawns) => {
   else if (indexPawns === 3) return "queen";
   else if (indexPawns === 4) return "king";
 };
+
 export const setPawnImg = (
   td,
   typePawn,

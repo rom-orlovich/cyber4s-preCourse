@@ -7,14 +7,14 @@ import {
   cheakBoardDir,
   getNextPileChild,
   getDataFromDataSet,
-  checkIligalePos,
+  checkillegalPos,
   checkNumMovesOfPawn,
 } from "./pawnMovementHelpers.js";
 
 const getRowsColumns = (curIndex, newIndex, arrTD) => {
   const CurIndex = curIndex * 1;
 
-  const NewIndex = checkIligalePos(newIndex, CurIndex, arrTD);
+  const NewIndex = checkillegalPos(CurIndex, newIndex, arrTD);
   const [row, column] = arrTD[CurIndex]?.dataset.indexPos.split(",");
   const [rowNext, columnNext] = arrTD[NewIndex]?.dataset.indexPos.split(",");
 
@@ -27,7 +27,7 @@ const getRowsColumns = (curIndex, newIndex, arrTD) => {
 
 export const breakLoop = (change, curIndex, arrTd, color, relativeMoves) => {
   const newPos = change + curIndex;
-  const nextPileChild = getNextPileChild(newPos, curIndex, arrTd);
+  const nextPileChild = getNextPileChild(curIndex, newPos, arrTd);
   if (!nextPileChild) return;
   const getColorDataSet = getDataFromDataSet(nextPileChild, 3);
   if (relativeMoves && getColorDataSet === color) return true;
@@ -50,7 +50,7 @@ const obliquePossibleMovment = (
     return curIndex;
   }
 
-  const nextPileImg = getNextPileChild(NewIndex, curIndex, arr);
+  const nextPileImg = getNextPileChild(curIndex, NewIndex, arr);
   const colorNextPileImg = getDataFromDataSet(nextPileImg, 3);
   if (colorNextPileImg === color && relativeMoves) return NewIndex;
   if (nextPileImg && colorNextPileImg === color) return curIndex;
@@ -78,7 +78,7 @@ const verticalPossibleMovment = (
   ) {
     return curIndex;
   }
-  const nextPileImg = getNextPileChild(NewIndex, curIndex, arr);
+  const nextPileImg = getNextPileChild(curIndex, NewIndex, arr);
   const colorNextPileImg = getDataFromDataSet(nextPileImg, 3);
 
   if (relativeMoves && colorNextPileImg === color) return NewIndex;
@@ -97,7 +97,7 @@ export const bishopMove = (
   relativeMoves
 ) => {
   if (type !== "bishop" && type !== "queen") return [];
-  const nextPileChild = getNextPileChild(curIndex + change, curIndex, arrTd);
+  const nextPileChild = getNextPileChild(curIndex, curIndex + change, arrTd);
   const getColorDataSet = getDataFromDataSet(nextPileChild, 3);
   return !relativeMoves && getColorDataSet === color
     ? []
@@ -127,7 +127,7 @@ export const rookMove = (
   relativeMoves
 ) => {
   if (type !== "rook" && type !== "queen") return [];
-  const nextPileChild = getNextPileChild(curIndex + change, curIndex, arrTd);
+  const nextPileChild = getNextPileChild(curIndex, curIndex + change, arrTd);
   const getColorDataSet = getDataFromDataSet(nextPileChild, 3);
 
   return !relativeMoves && getColorDataSet === color
@@ -154,6 +154,7 @@ const checkPawnMovement = (curIndex, newIndex, arrTD, color, relativeMoves) => {
     curPos: [rowNext, columnNext],
     NewIndex,
   } = getRowsColumns(curIndex, newIndex, arrTD);
+  console.log(getRowsColumns(curIndex, newIndex, arrTD));
   const rowDiff1 = Math.abs(row - rowNext) === 1;
   const rowDiff2 = Math.abs(row - rowNext) === 2;
   const columnDiff0 = Math.abs(column - columnNext) === 0;
@@ -166,9 +167,9 @@ const checkPawnMovement = (curIndex, newIndex, arrTD, color, relativeMoves) => {
 
   const nextChildIndex = color === "black" ? curIndex + 8 : curIndex - 8;
 
-  const nextPileImg = getNextPileChild(NewIndex, curIndex, arrTD);
+  const nextPileImg = getNextPileChild(curIndex, NewIndex, arrTD);
   const colorNextPileImg = getDataFromDataSet(nextPileImg, 3);
-  const nextOnePileImg = getNextPileChild(nextChildIndex, curIndex, arrTD);
+  const nextOnePileImg = getNextPileChild(curIndex, nextChildIndex, arrTD);
   const colorOneNextPileImg = getDataFromDataSet(nextOnePileImg, 3);
 
   if (firstRowMoveCheck && !nextPileImg) return newIndex;
@@ -188,13 +189,14 @@ export const pawnMove = (
   typePawn,
   curIndex,
   arrTD,
-  boardDir,
+
   color,
   relativeMoves
 ) => {
   if (typePawn.type !== "pawn") return [];
   let numMovesPawn = checkNumMovesOfPawn(typePawn.pawnMoves);
-  let arrChanges = cheakBoardDir(boardDir, color, [7, 9, ...numMovesPawn]);
+  let arrChanges = cheakBoardDir(color, [7, 9, ...numMovesPawn]);
+
   const arr = arrChanges.map((change) => {
     return checkPawnMovement(
       curIndex,
@@ -204,11 +206,12 @@ export const pawnMove = (
       relativeMoves
     );
   });
+  console.log(arr);
   return arr;
 };
 
 const checKnightMove = (curIndex, newIndex, arrTd) => {
-  const NewIndex = checkIligalePos(newIndex, curIndex, arrTd);
+  const NewIndex = checkillegalPos(curIndex, newIndex, arrTd);
   const [row, column] = arrTd[curIndex]?.dataset.indexPos?.split(",");
   const [rowNext, columnNext] = arrTd[NewIndex].dataset?.indexPos?.split(",");
   if (
@@ -256,20 +259,20 @@ export const kingMove = (typePawn, arrTd, gameManageState, relativeMoves) => {
 
   const newPossibleMove = [];
   let curThreat, curThreatInPos;
-  curPosisbleMove.forEach((el) => {
-    curThreat = curThreatArr.some((threat) => threat === el);
+  curPosisbleMove.forEach((pm) => {
+    curThreat = curThreatArr.some((threat) => threat === pm);
 
     if (!curThreatInPos)
       curThreatInPos = curThreatArr.some(
-        (threat) => threat === el && threat === curIndex
+        (threat) => threat === pm && threat === curIndex
       );
 
-    const nextPileChild = getNextPileChild(el, curIndex, arrTd);
+    const nextPileChild = getNextPileChild(curIndex, pm, arrTd);
     const colorDataSet = getDataFromDataSet(nextPileChild, 3);
-    if (!colorDataSet && !curThreat) newPossibleMove.push(el);
+    if (!colorDataSet && !curThreat) newPossibleMove.push(pm);
 
-    if (colorDataSet && colorDataSet !== color) newPossibleMove.push(el);
-    else if (relativeMoves) newPossibleMove.push(el);
+    if (colorDataSet && colorDataSet !== color) newPossibleMove.push(pm);
+    else if (relativeMoves) newPossibleMove.push(pm);
   });
 
   if (curThreatInPos) {

@@ -1,8 +1,13 @@
-import { getDataFromDataSet } from "../pawnsMovment/pawnMovementHelpers.js";
+import {
+  checkillegalPos,
+  getDataFromDataSet,
+} from "../pawnsMovment/pawnMovementHelpers.js";
 import {
   getHowManyTimeElApperInArr,
   getSameValueBet2Arr,
   makeArray,
+  makeArrayToSet,
+  selectElement,
 } from "./utilitesFun.js";
 
 export const getDataAboutPawns = (color, arrTD) => {
@@ -15,6 +20,50 @@ export const getDataAboutPawns = (color, arrTD) => {
     if (colorImg === color) curDataPawn.push(img.dataset.typePawn);
   });
   return curDataPawn;
+};
+
+export const getKingRelativePos = (color, arrTd) => {
+  const getKingImg = selectElement(
+    `img[data-type-pawn*="king"][data-type-pawn*="${color}"]`
+  );
+  if (!getKingImg) return;
+  const typePawn = getKingImg.dataset.typePawn;
+  let kingMoves = [-9, -7, 9, 7, -1, 1, 8, -8];
+  const [curIndex, type, _] = typePawn.split("-");
+
+  kingMoves = kingMoves.map((el) => {
+    const CurIndex = curIndex * 1;
+    return checkillegalPos(CurIndex, CurIndex + el, arrTd);
+  });
+  return { kingEl: getKingImg, kingRelativeMoves: makeArrayToSet(kingMoves) };
+};
+
+export const checkKingPossibleMove = (threatArr, curPossibleMoves) => {
+  const newPossibleMove = [];
+  curPossibleMoves.forEach((pm) => {
+    const timesInThreat = getHowManyTimeElApperInArr(pm, threatArr);
+    if (timesInThreat < 2) newPossibleMove.push(pm);
+  });
+
+  return newPossibleMove;
+};
+
+export const checkPossibleThreatOfKing = (
+  typePawnData,
+  theCheckedMoves,
+  possibleMovesFun,
+  relative = true
+) => {
+  let threatArr = [];
+  typePawnData.forEach((data) => {
+    const pawnsPossibleMove = possibleMovesFun(data, relative);
+
+    const sameValue = getSameValueBet2Arr(pawnsPossibleMove, theCheckedMoves);
+
+    if (sameValue.length === 0) return;
+    threatArr = [...threatArr, ...sameValue];
+  });
+  return threatArr;
 };
 
 const getTheMovmentUntilTheKing = (posPawn, kingPos, arr) => {
@@ -39,24 +88,6 @@ const getTheMovmentUntilTheKing = (posPawn, kingPos, arr) => {
   return arrS;
 };
 
-export const checkPossibleThreatOfKing = (
-  typePawnData,
-  theCheckedMoves,
-  possibleMovesFun,
-  relative = true
-) => {
-  let threatArr = [];
-  typePawnData.forEach((data) => {
-    const pawnsPossibleMove = possibleMovesFun(data, relative);
-
-    const sameValue = getSameValueBet2Arr(pawnsPossibleMove, theCheckedMoves);
-
-    if (sameValue.length === 0) return;
-    threatArr = [...threatArr, ...sameValue];
-  });
-  return threatArr;
-};
-
 export const checkPawnThreatMove = (typePawnData, possibleMoves, kingPos) => {
   let playerMove = [];
   typePawnData.forEach((data) => {
@@ -75,14 +106,4 @@ export const checkPawnThreatMove = (typePawnData, possibleMoves, kingPos) => {
   });
 
   return playerMove;
-};
-
-export const checkKingPossibleMove = (threatArr, curPossibleMoves) => {
-  const newPossibleMove = [];
-  curPossibleMoves.forEach((pm) => {
-    const timesInThreat = getHowManyTimeElApperInArr(pm, threatArr);
-    if (timesInThreat < 2) newPossibleMove.push(pm);
-  });
-
-  return newPossibleMove;
 };
