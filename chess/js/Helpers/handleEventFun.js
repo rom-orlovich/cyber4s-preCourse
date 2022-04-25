@@ -3,6 +3,15 @@ import {
   movePawnToOtherPile,
 } from "../pawnsMovment/pawnMovementHelpers.js";
 
+/**
+ *
+ * @param {String} typePawn The typePawn dataset of pawn
+ * @param {Array} posibleMoves Array of pawn's possible move
+ * @param {Array} arrTD Array of table's TD piles Array
+ * @param {Array} gameManageState Array of getState and setState functions of the app's state
+ * @param {Boolean} addActive If is true , the function will add an 'active' class to each
+ * pile that the event mouseover is be executed
+ */
 export const handlePosibleMovment = (
   typePawn,
   posibleMoves,
@@ -17,6 +26,16 @@ export const handlePosibleMovment = (
   });
 };
 
+/**
+ *
+ * @param {String} typePawn The typePawn dataset of pawn
+ * @param {Array} posibleMoves Array of pawn's possible move
+ * @param {Array} arrTD Array of table's TD piles Array
+ * @param {Function} handleAfterClick Function that excute after the click event 
+ * @param {Array} gameManageState Array of getState and setState functions of the app's state
+
+ */
+
 export const handleClickPawn = (
   typePawn,
   posibleMoves,
@@ -28,21 +47,27 @@ export const handleClickPawn = (
   const [getGameState, setGameState] = gameManageState;
   const gameState = getGameState();
   posibleMoves.forEach((el) => {
-    const kingState = gameState.kingState[gameState.activePlayer];
-
     arrTD[el].addEventListener("click", (e) => {
-      const target = e.target.closest("td");
-      const indexPosTDClick = target?.dataset?.indexPos;
-
+      //Check if the td is cliecked
+      const target = e.currentTarget;
       if (!target) return;
+
+      //Move pawn to other piles if
+      const indexPosTDClick = target?.dataset?.indexPos;
       let dataInfo = movePawnToOtherPile(typePawn, indexPosTDClick);
 
+      //If there is no dataset that return from the move function , the function will exit
       if (!dataInfo) return;
+
+      // Set the new number moves of the pawns if he was moved
       if (type === "pawn") editDatasSetByQuery(el, 4, "1");
+
+      // Set the new pos to the king
       if (type === "king") {
         gameState.kingState[color].pos = dataInfo.split("-")[0];
         setGameState(gameState);
       }
+      // see the function in GameEvent file on line 96
       handleAfterClick(dataInfo);
     });
   });

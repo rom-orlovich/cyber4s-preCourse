@@ -50,7 +50,8 @@ export class GameEvents {
   /**
    *
    * @param {Array} dataTD - Array of td about the table
-   * @param {Array} gameManageState Array of functions - getGamestate and setGameState
+   * @param {Array} gameManageState Array of getState and setState functions of the app's state
+ Array of functions - getGamestate and setGameState
    * @param {Array} controlFunction Array of functions - changeDirBoard and initApp
    */
   initEvents(dataTD, gameManageState, controlFunction) {

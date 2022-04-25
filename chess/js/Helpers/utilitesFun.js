@@ -86,7 +86,7 @@ export const removeEventListenerByQuery = (nameEvent, handler, query) => {
  *
  * @param {Number} start
  * @param {Number} end
- * @param {Number} change The I of the loop
+ * @param {Number} change Get the change number in the index of the array TD. The I of the loop
  * @param {Function} handler function to excute on the I before push it to array.
  * If it is not defined so the array push the regular I
  * @param {Function} breakFun  Function to break the loop.

@@ -9,8 +9,9 @@ import {
 /**
  *
  * @param {String} typePawn The typePawn dataset of pawn
- * @param {Array} arrTD Array of table's TD
+ * @param {Array} arrTD Array of table's TD piles Array of table's TD piles
  * @param {Array} gameManageState Array of getState and setState functions of the app's state
+ Array of getState and setState functions of the app's state
  * @param {Boolean} relativeMoves If is true turns the possible moves to be relative instead absolute
  * @returns Array of the pawn's possible movements according to his type.
  */

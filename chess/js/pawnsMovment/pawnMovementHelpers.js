@@ -43,7 +43,7 @@ export const editDatasSetByQuery = (
 /**
  *
  * @param {String} color of the pawn
- * @param {Number} changes Arr of the possible changes in movement of the pawn
+ * @param {Number} change Get the change number in the index of the array TD.s Arr of the possible changes in movement of the pawn
  * @returns New change movements array- negetive or positive number according the color of the pawn
  */
 export const cheakBoardDir = (color, changes) =>
@@ -53,7 +53,7 @@ export const cheakBoardDir = (color, changes) =>
  *
  * @param {Number} newIndex
  * @param {Number} curIndex
- * @param {Array} arrTD
+ * @param {Array} arrTD Array of table's TD piles
  * @returns The new normalize index pos
  */
 export const checkillegalPos = (curIndex, newIndex, arrTD) => {
@@ -66,7 +66,7 @@ export const checkillegalPos = (curIndex, newIndex, arrTD) => {
  *
  * @param {Number} newIndex
  * @param {Number} curIndex
- * @param {Array} arrTD
+ * @param {Array} arrTD Array of table's TD piles
  * @returns First element child of new normalize index pos
  */
 
@@ -83,6 +83,12 @@ export const checkNumMovesOfPawn = (numMoves) => {
   return NumMoves === 0 ? [8, 16] : [8];
 };
 
+/**
+ *
+ * @param {String} typePawn The typePawn dataset of pawn
+ * @param {Array} newPos Array that include the row and col of the new TD pile
+ * @returns The new dataset of typePawn
+ */
 export const movePawnToOtherPile = (typePawn, newPos) => {
   let [index, type, number, color] = typePawn.split("-");
 

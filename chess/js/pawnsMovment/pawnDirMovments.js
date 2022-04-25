@@ -11,6 +11,14 @@ import {
   checkNumMovesOfPawn,
 } from "./pawnMovementHelpers.js";
 
+/**
+ *
+ * @param {Number} curIndex
+ * @param {Number} newIndex
+ * @param {Array} arrTD
+ * @returns  Object that contains all the data about the row and column of the
+ * current position and return the new illegl index
+ */
 const getRowsColumns = (curIndex, newIndex, arrTD) => {
   const CurIndex = curIndex * 1;
 
@@ -25,7 +33,17 @@ const getRowsColumns = (curIndex, newIndex, arrTD) => {
   };
 };
 
-export const breakLoop = (change, curIndex, arrTd, color, relativeMoves) => {
+/**
+ *
+ * @param {Number} change Get the change number in the index of the array TD.
+ * @param {Number} curIndex
+ * @param {Array} arrTD Array of table's TD piles Array
+ * @param {String} color Get color of the pawn
+ * @param {Boolean} relativeMoves If is true the function will not relate to the same color
+ * restriction
+ * @returns Boolean value or undefined
+ */
+export const breakLoop = (curIndex, change, arrTd, color, relativeMoves) => {
   const newPos = change + curIndex;
   const nextPileChild = getNextPileChild(curIndex, newPos, arrTd);
   if (!nextPileChild) return;
@@ -33,6 +51,17 @@ export const breakLoop = (change, curIndex, arrTd, color, relativeMoves) => {
   if (relativeMoves && getColorDataSet === color) return true;
   if (getColorDataSet !== color || getColorDataSet === color) return true;
 };
+
+/**
+ *
+ * @param {Number} curIndex
+ * @param {Number} change Get the change number in the index of the array TD. Get the change number in the index of the array TD.
+ * @param {Array} arrTD Array of table's TD piles Array
+ * @param {String} color Get color of the pawn
+ * @param {Boolean} relativeMoves If is true the function will not relate to the same color
+ * restriction
+ * @returns Boolean value or undefined
+ */
 const obliquePossibleMovment = (
   curIndex,
   change,
@@ -58,6 +87,16 @@ const obliquePossibleMovment = (
   return NewIndex;
 };
 
+/**
+ *
+ * @param {Number} curIndex
+ * @param {Number} change Get the change number in the index of the array TD. Get the change number in the index of the array TD.
+ * @param {Array} arrTD Array of table's TD piles Array
+ * @param {String} color Get color of the pawn
+ * @param {Boolean} relativeMoves If is true the function will not relate to the same color
+ * restriction
+ * @returns Boolean value or undefined
+ */
 const verticalPossibleMovment = (
   curIndex,
   change,
@@ -70,6 +109,8 @@ const verticalPossibleMovment = (
     curPos: [rowNext, columnNext],
     NewIndex,
   } = getRowsColumns(curIndex, curIndex + change, arr);
+
+  //check the
   if (
     !(
       (rowNext !== row && column === columnNext) ||
@@ -97,6 +138,7 @@ export const bishopMove = (
   relativeMoves
 ) => {
   if (type !== "bishop" && type !== "queen") return [];
+
   const nextPileChild = getNextPileChild(curIndex, curIndex + change, arrTd);
   const getColorDataSet = getDataFromDataSet(nextPileChild, 3);
   return !relativeMoves && getColorDataSet === color
@@ -113,7 +155,7 @@ export const bishopMove = (
             color,
             relativeMoves
           ),
-        (i) => breakLoop(i * change, curIndex, arrTd, color, relativeMoves)
+        (i) => breakLoop(curIndex, i * change, arrTd, color, relativeMoves)
       );
 };
 
@@ -144,9 +186,20 @@ export const rookMove = (
             color,
             relativeMoves
           ),
-        (i) => breakLoop(i * change, curIndex, arrTd, color, relativeMoves)
+        (i) => breakLoop(curIndex, i * change, arrTd, color, relativeMoves)
       );
 };
+
+/**
+ *
+ * @param {Number} curIndex
+ * @param {Number} newIndex
+ * @param {Array} arrTD Array of table's TD piles Array
+ * @param {String} color Get color of the pawn
+ * @param {Boolean} relativeMoves If is true the function will not relate to the same color
+ * restriction
+ * @returns Boolean value or undefined
+ */
 
 const checkPawnMovement = (curIndex, newIndex, arrTD, color, relativeMoves) => {
   const {
