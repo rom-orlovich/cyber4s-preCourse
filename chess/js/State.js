@@ -3,8 +3,8 @@ export class state {
   /**
    *
    * @param {Object} state Get the new state we want to update
-   * @param {Boolean} initState Get initState we want to init the state of the program
-   * @returns undefined if initState is not defined
+   * @param {Boolean} initState  if initState is true the state of the app restore with the
+   * state we pass as paramter
    */
 
   setState(state, initState = false) {
@@ -29,7 +29,7 @@ export class state {
   /**
    *
    * @param {Object} state Get new state to manage in the app
-   * @returns {Array} Array that contains the getState function and the setState function
+   * @returns {Array} Array that contains the getState  and the setState functions
    */
 
   useState(state) {

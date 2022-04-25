@@ -154,7 +154,7 @@ const checkPawnMovement = (curIndex, newIndex, arrTD, color, relativeMoves) => {
     curPos: [rowNext, columnNext],
     NewIndex,
   } = getRowsColumns(curIndex, newIndex, arrTD);
-  console.log(getRowsColumns(curIndex, newIndex, arrTD));
+
   const rowDiff1 = Math.abs(row - rowNext) === 1;
   const rowDiff2 = Math.abs(row - rowNext) === 2;
   const columnDiff0 = Math.abs(column - columnNext) === 0;
@@ -206,7 +206,7 @@ export const pawnMove = (
       relativeMoves
     );
   });
-  console.log(arr);
+
   return arr;
 };
 
