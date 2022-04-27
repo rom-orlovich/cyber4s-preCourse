@@ -10,10 +10,16 @@ import {
   checkPossibleThreatOfKing,
   checkThreatOnPiles,
 } from "./Helpers/checkKingStatusHelpers.js";
-import { addEventListenerByQuery, objDeepCopy } from "./Helpers/utilitesFun.js";
+import {
+  addEventListenerByQuery,
+  createImgHtml,
+  objDeepCopy,
+} from "./Helpers/utilitesFun.js";
 import { getKingRelativePos } from "./Helpers/checkKingStatusHelpers.js";
 import { posibleMovementsObj } from "./pawnsMovment/posibleMovmentsRes.js";
 import { movePawnToOtherPile } from "./pawnsMovment/pawnMovementHelpers.js";
+import { dataImg } from "./Helpers/chessPawnsData.js";
+import { setPawnImg } from "./Helpers/ChessBoardHelpers.js";
 
 export class GameEvents {
   dataTD;
@@ -215,15 +221,50 @@ export class GameEvents {
       gameState.capturePawns.isChange = false;
     }
     this.checkCastleMoveAfterClick(newDataSetInfo);
+    this.changePawns(newDataSetInfo);
     this.checkCheckMate();
     this.setAfterPlayerTurn(gameState.activePlayer);
     this.setGameState(gameState);
   }
 
+  changePawns(newDataSetInfo) {
+    const [curIndex, type, pawnIndex, color] = newDataSetInfo.split("-");
+    if (type !== "pawn") return;
+    const CurIndex = curIndex * 1;
+    const TD = this.dataTD[CurIndex];
+    const row = TD.dataset.indexPos[0] * 1;
+
+    if (row > 0 && row < 7) return;
+
+    const numberPlayer = prompt(`Which player do you like to get?
+    1:Queen,
+    2:Rook,
+    3:Bishop
+    4:Knight
+    Please Enter Number..
+    `);
+    const imgChoosen = {
+      1: "queen",
+      2: "rook",
+      3: "bishop",
+      4: "knight",
+    };
+
+    TD.firstElementChild?.remove();
+    const newImg = setPawnImg(
+      TD,
+      imgChoosen[numberPlayer],
+      pawnIndex,
+      curIndex,
+      color
+    );
+    if (newImg) newImg.classList.add("rotate180Img");
+  }
+
   checkCastleMoveBeforeClick(newDataSetInfo) {
-    const [index, type, _] = newDataSetInfo.split("-");
-    const Index = index * 1;
-    if (type !== "king" && (Index !== 60 || Index !== 4)) return;
+    const [curIndex, type, _] = newDataSetInfo.split("-");
+    const CurIndex = curIndex * 1;
+    if (type !== "king" && (CurIndex !== 60 || CurIndex !== 4)) return;
     const gameState = this.getGameState();
     const secColor = this.setSecColor(gameState.activePlayer);
     const kingState = gameState.kingState[secColor];
@@ -231,13 +272,13 @@ export class GameEvents {
     const threatsOnShort = checkThreatOnPiles(
       secColor,
       this.dataTD,
-      [Index + 1, Index + 2, Index + 3],
+      [CurIndex + 1, CurIndex + 2, CurIndex + 3],
       this.possibleMoveWithMode
     );
     const threatsOnLong = checkThreatOnPiles(
       secColor,
       this.dataTD,
-      [Index - 1, Index - 2, Index - 3],
+      [CurIndex - 1, CurIndex - 2, CurIndex - 3],
       this.possibleMoveWithMode
     );
 

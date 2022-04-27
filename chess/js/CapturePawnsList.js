@@ -36,7 +36,6 @@ export class CapturePawnsList {
   }
 
   blackCapturePawns(gameState) {
-    console.log(gameState);
     const capturesArray = gameState.capturePawns["black"];
 
     return this.createCaptureBlock(
