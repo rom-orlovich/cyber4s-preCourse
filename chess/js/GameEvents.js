@@ -30,15 +30,6 @@ export class GameEvents {
 
   constructor() {}
 
-  //Assign the dataTD and the functions of the state of the game into 'this' .
-  //and inital the state of the game
-  initChessBoardControl(dataTD, gameManageState) {
-    const [getGameState, setGameState] = gameManageState;
-    this.gameManageState = gameManageState;
-    this.getGameState = getGameState;
-    this.setGameState = setGameState;
-    this.dataTD = dataTD;
-  }
   setSecColor(color) {
     return color === "white" ? "black" : "white";
   }
@@ -70,6 +61,16 @@ export class GameEvents {
     );
   };
 
+  //Assign the dataTD and the functions of the state of the game into 'this' .
+  //and inital the state of the game
+  initChessBoardControl(dataTD, gameManageState) {
+    const [getGameState, setGameState] = gameManageState;
+    this.gameManageState = gameManageState;
+    this.getGameState = getGameState;
+    this.setGameState = setGameState;
+    this.dataTD = dataTD;
+  }
+
   /**
    *
    * @param {Array} dataTD - Array of td about the table
@@ -95,21 +96,25 @@ export class GameEvents {
         //Get data about the pawns from his dataset of typePawn
         const [curIndex, type, _, targetColor] = dataSetInfo.split("-");
         const gameState = this.getGameState();
+
         const kingState = gameState.kingState[targetColor];
 
         //If the color of the target that was clicked is different from the active player
         // -exit from the function
         if (targetColor !== gameState.activePlayer) return;
+        const defenseMovePlayer =
+          kingState.pawnCanDefense.includes(dataSetInfo);
 
         //Check if the active player's king is threated by sec player pawns
         //If he is still threated and the king is not choosen , so exit from the function
-        const isInDangerPlace = kingState.threats.some(
-          (el) => el === curIndex * 1
-        );
+        const isInDangerPlace =
+          kingState.relativeThreats.includes(curIndex * 1) &&
+          kingState.relativeThreats.includes(kingState.pos);
+
         if (
-          isInDangerPlace &&
+          kingState.stateCheck === "check" &&
           type !== "king" &&
-          kingState.stateCheck === "check"
+          !defenseMovePlayer
         )
           return;
 
@@ -123,8 +128,8 @@ export class GameEvents {
          */
         const handleAfterClick = (newDataSetInfo, bool = true) => {
           this.handleEventsAfterClick(newDataSetInfo, renderCapturesLists);
-
-          if (this.checkReset(initApp)) return;
+          // this.setLastTurn(dataSetInfo, newDataSetInfo);
+          if (this.checkReset(initApp, renderCapturesLists)) return;
           bool && changeDirBoard(this.getGameState());
           this.setGameState(this.getGameState());
         };
@@ -149,10 +154,18 @@ export class GameEvents {
 
         if (targetColor !== gameState.activePlayer) return;
 
-        const isInDangerPlace = kingState.threats.some(
-          (el) => el === curIndex * 1
-        );
-        if (isInDangerPlace && type !== "king") return;
+        const defenseMovePlayer =
+          kingState.pawnCanDefense.includes(dataSetInfo);
+        // const isInDangerPlace =
+        //   kingState.relativeThreats.includes(curIndex * 1) &&
+        //   kingState.relativeThreats.includes(kingState.pos);
+
+        if (
+          kingState.stateCheck === "check" &&
+          type !== "king" &&
+          !defenseMovePlayer
+        )
+          return;
         this.handleBeforeClick(dataSetInfo);
         this.handleMouseOver(dataSetInfo, this.dataTD);
       },
@@ -226,6 +239,12 @@ export class GameEvents {
     this.setAfterPlayerTurn(gameState.activePlayer);
     this.setGameState(gameState);
   }
+  //   setLastTurn(oldDataSetInfo,newDataSetInfo) {
+  // const gameState=this.getGameState();
+  //     const [oldIndex,color] = oldDataSetInfo.split("-");
+  //     const [newIndex] = newDataSetInfo.split("-");
+
+  //   }
 
   changeRegularPawns(newDataSetInfo) {
     const [curIndex, type, pawnIndex, color] = newDataSetInfo.split("-");
@@ -341,14 +360,21 @@ export class GameEvents {
     );
 
     //Get array of threats on the sec king
-    const [threatsArr] = checkPossibleThreatOfKing(
+    const [relativeThreatsArr] = checkPossibleThreatOfKing(
       typePawnDataActivePlayer,
       secKingRelativeMoves,
       this.possibleMoveWithMode
     );
+    const [absoluteThreatsArr] = checkPossibleThreatOfKing(
+      typePawnDataActivePlayer,
+      secKingRelativeMoves,
+      this.possibleMoveWithMode,
+      false
+    );
 
     //Assignment the sec color kingstate threats and update the state
-    kingState.threats = threatsArr;
+    kingState.relativeThreats = relativeThreatsArr;
+    kingState.absoluteThreats = absoluteThreatsArr;
     this.setGameState(gameState);
 
     //Get the current possible move of the sec color kings
@@ -359,7 +385,7 @@ export class GameEvents {
 
     //Get the calculated defense moves of other pawns of the sec color in order
     //to cancel the threats and the check.
-    const [defenseMove] = checkPossibleThreatOfKing(
+    const [defenseMove, dataPawnMove] = checkPossibleThreatOfKing(
       typePawnDataSecPlayer,
       threatPawnMoves,
       this.possibleMoveWithMode,
@@ -387,10 +413,10 @@ export class GameEvents {
     //if the game continue ,assign the new possible move to the sec color king state
     //And the new game state
     kingState.possibleMoves = checkKingPossibleMove(
-      threatsArr,
+      absoluteThreatsArr,
       secKingRelativeMoves
     );
-
+    kingState.pawnCanDefense = dataPawnMove;
     this.setGameState(gameState);
   }
 
@@ -398,12 +424,13 @@ export class GameEvents {
   //Check the current king state of the active player.
   //if the state checkmate and the user input confirm the app will inital state
   // and render the app by initApp function
-  checkReset(initApp) {
+  checkReset(initApp, renderCapturesLists) {
     const gameState = this.getGameState();
     const stateCheck = gameState.kingState[gameState.activePlayer].stateCheck;
     if (!(stateCheck === "checkmate" && confirm("rest?"))) return;
 
     this.setGameState(objDeepCopy(gameStateInital), true);
+    renderCapturesLists([this.getGameState, this.setGameState], true);
     initApp(true);
 
     return true;

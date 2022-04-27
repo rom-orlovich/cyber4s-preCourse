@@ -46,7 +46,8 @@ export const breakLoop = (curIndex, change, arrTD, color, relativeMoves) => {
   const nextPileChild = getNextPileChild(curIndex, newPos, arrTD);
   if (!nextPileChild) return;
   const getColorDataSet = getDataFromDataSet(nextPileChild, 3);
-  if (relativeMoves && getColorDataSet === color) return true;
+  // if (relativeMoves && getColorDataSet===color) return true;
+  if (relativeMoves && getColorDataSet) return false;
   if (getColorDataSet !== color || getColorDataSet === color) return true;
 };
 
@@ -87,6 +88,7 @@ const obliquePossibleMovment = (
   const nextPileImg = getNextPileChild(curIndex, NewIndex, arr);
   const colorNextPileImg = getDataFromDataSet(nextPileImg, 3);
   if (colorNextPileImg === color && relativeMoves) return NewIndex;
+  // if (colorNextPileImg === color) return NewIndex;
   if (nextPileImg && colorNextPileImg === color) return curIndex;
 
   return NewIndex;
@@ -354,7 +356,7 @@ export const kingMove = (typePawn, arrTD, gameManageState, relativeMoves) => {
   const { kingState } = gameState;
   const kingStateByColor = kingState[color];
   const curPosisbleMove = kingStateByColor.possibleMoves;
-  const curThreatArr = kingStateByColor.threats;
+  const curThreatArr = kingStateByColor.absoluteThreats;
   const castleState = kingStateByColor.castleState;
   const curIndex = index * 1;
   const newPossibleMove = [];
@@ -363,8 +365,8 @@ export const kingMove = (typePawn, arrTD, gameManageState, relativeMoves) => {
   curPosisbleMove.forEach((pm) => {
     // For each cur possible move, check if there is some threat on the king
     //and if the threat is same as his possible move
-    curThreat = curThreatArr.some((threat) => threat === pm);
-    curThreatInPos = curThreatArr.some((threat) => threat === curIndex);
+    curThreat = curThreatArr.includes(pm);
+    curThreatInPos = curThreatArr.includes(curIndex);
 
     //check it the next pile is empty and the color is different
     //and the reltaive move mode is active

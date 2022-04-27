@@ -2,11 +2,16 @@ export const gameStateInital = {
   boardDir: 1,
   playerTurns: [0, 0],
   activePlayer: "white",
+  lastTurn: {
+    white: [],
+    black: [],
+  },
   kingState: {
     white: {
-      pos: 0,
+      pos: 60,
       stateCheck: "",
-      threats: [],
+      relativeThreats: [],
+      absoluteThreats: [],
       relativeMoves: [],
       possibleMoves: [],
       newPossibleMoves: [],
@@ -17,9 +22,10 @@ export const gameStateInital = {
       },
     },
     black: {
-      pos: 0,
+      pos: 4,
       stateCheck: "",
-      threats: [],
+      relativeThreats: [],
+      absoluteThreats: [],
       relativeMoves: [],
       possibleMoves: [],
       newPossibleMoves: [],

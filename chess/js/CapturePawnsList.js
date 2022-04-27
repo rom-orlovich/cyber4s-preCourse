@@ -11,7 +11,6 @@ export class CapturePawnsList {
     const h1 = document.createElement("h1");
     h1.innerHTML = heading;
     div.appendChild(h1);
-
     capturesArray.forEach((el) => {
       const img = div2.appendChild(el);
       img.className = "";
@@ -46,12 +45,19 @@ export class CapturePawnsList {
     );
   }
 
-  render(gameManageState) {
+  render(gameManageState, rest = false) {
     const [getGameState, setGameState] = gameManageState;
+    let whiteCapturePawns, blackCapturePawns;
     const gameState = getGameState();
-    const whiteCapturePawns = this.whiteCapturePawns(gameState);
-    const blackCapturePawns = this.blackCapturePawns(gameState);
-    document.body.append(whiteCapturePawns, blackCapturePawns);
+    if (rest) {
+      document
+        .querySelectorAll(".capture_block div")
+        .forEach((el) => (el.innerHTML = ""));
+    } else {
+      whiteCapturePawns = this.whiteCapturePawns(gameState, rest);
+      blackCapturePawns = this.blackCapturePawns(gameState, rest);
+      document.body.append(whiteCapturePawns, blackCapturePawns);
+    }
   }
 }
 
