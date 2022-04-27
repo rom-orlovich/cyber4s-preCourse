@@ -221,13 +221,13 @@ export class GameEvents {
       gameState.capturePawns.isChange = false;
     }
     this.checkCastleMoveAfterClick(newDataSetInfo);
-    this.changePawns(newDataSetInfo);
+    this.changeRegularPawns(newDataSetInfo);
     this.checkCheckMate();
     this.setAfterPlayerTurn(gameState.activePlayer);
     this.setGameState(gameState);
   }
 
-  changePawns(newDataSetInfo) {
+  changeRegularPawns(newDataSetInfo) {
     const [curIndex, type, pawnIndex, color] = newDataSetInfo.split("-");
     if (type !== "pawn") return;
     const CurIndex = curIndex * 1;
