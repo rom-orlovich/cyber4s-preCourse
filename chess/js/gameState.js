@@ -10,6 +10,11 @@ export const gameStateInital = {
       relativeMoves: [],
       possibleMoves: [],
       newPossibleMoves: [],
+      pawnCanDefense: [],
+      castleState: {
+        moveRooks: [true, true],
+        didCastle: false,
+      },
     },
     black: {
       pos: 0,
@@ -18,12 +23,18 @@ export const gameStateInital = {
       relativeMoves: [],
       possibleMoves: [],
       newPossibleMoves: [],
+      pawnCanDefense: [],
+      castleState: {
+        moveRooks: [true, true],
+        didCastle: false,
+      },
     },
   },
   points: [0, 0],
-  eatenPawns: {
-    player1: [],
-    player2: [],
+  capturePawns: {
+    white: [],
+    black: [],
+    isChange: false,
   },
   lastPossibleMove: [],
 };

@@ -2,6 +2,7 @@ import {
   checkillegalPos,
   getDataFromDataSet,
 } from "../pawnsMovment/pawnMovementHelpers.js";
+import { posibleMovementsObj } from "../pawnsMovment/posibleMovmentsRes.js";
 import {
   getHowManyTimeElApperInArr,
   getSameValueBet2Arr,
@@ -22,7 +23,7 @@ export const getDataAboutPawns = (color, arrTD) => {
   return curDataPawn;
 };
 
-export const getKingRelativePos = (color, arrTd) => {
+export const getKingRelativePos = (color, arrTD) => {
   const getKingImg = selectElement(
     `img[data-type-pawn*="king"][data-type-pawn*="${color}"]`
   );
@@ -33,7 +34,7 @@ export const getKingRelativePos = (color, arrTd) => {
 
   kingMoves = kingMoves.map((el) => {
     const CurIndex = curIndex * 1;
-    return checkillegalPos(CurIndex, CurIndex + el, arrTd);
+    return checkillegalPos(CurIndex, CurIndex + el, arrTD);
   });
   return { kingEl: getKingImg, kingRelativeMoves: makeArrayToSet(kingMoves) };
 };
@@ -55,15 +56,18 @@ export const checkPossibleThreatOfKing = (
   relative = true
 ) => {
   let threatArr = [];
+  let dataPawnMove = [];
   typePawnData.forEach((data) => {
     const pawnsPossibleMove = possibleMovesFun(data, relative);
 
     const sameValue = getSameValueBet2Arr(pawnsPossibleMove, theCheckedMoves);
 
     if (sameValue.length === 0) return;
+
     threatArr = [...threatArr, ...sameValue];
+    dataPawnMove.push(data);
   });
-  return threatArr;
+  return [threatArr, dataPawnMove];
 };
 
 const getTheMovmentUntilTheKing = (posPawn, kingPos, arr) => {
@@ -106,4 +110,27 @@ export const checkPawnThreatMove = (typePawnData, possibleMoves, kingPos) => {
   });
 
   return playerMove;
+};
+
+export const checkThreatOnPiles = (
+  color,
+  arrTD,
+  arrPos,
+  possibleMovmenWithMode
+) => {
+  const setColor = color === "white" ? "black" : "white";
+  const dataOfSecPlayerPawn = getDataAboutPawns(setColor, arrTD);
+  let sameValueRes = [];
+
+  dataOfSecPlayerPawn.forEach((dataset) => {
+    const pawnsPossibleMove = possibleMovmenWithMode(dataset, false);
+
+    const sameValue = getSameValueBet2Arr(pawnsPossibleMove, arrPos);
+
+    if (sameValue.length === 0) return;
+
+    sameValueRes = [...sameValueRes, ...sameValue];
+  });
+
+  return sameValueRes;
 };

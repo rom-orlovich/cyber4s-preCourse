@@ -8,10 +8,12 @@ import {
   checkKingPossibleMove,
   checkPawnThreatMove,
   checkPossibleThreatOfKing,
+  checkThreatOnPiles,
 } from "./Helpers/checkKingStatusHelpers.js";
 import { addEventListenerByQuery, objDeepCopy } from "./Helpers/utilitesFun.js";
 import { getKingRelativePos } from "./Helpers/checkKingStatusHelpers.js";
 import { posibleMovementsObj } from "./pawnsMovment/posibleMovmentsRes.js";
+import { movePawnToOtherPile } from "./pawnsMovment/pawnMovementHelpers.js";
 
 export class GameEvents {
   dataTD;
@@ -49,13 +51,28 @@ export class GameEvents {
 
   /**
    *
+   * @param {String} datasetTypePawn Get the pawn typePawn dataset
+   * @param {Boolean} relative If true the possible movement will be relative
+   * @returns The improve possible move function that return the relative moves of the pawns
+   */
+  possibleMoveWithMode = (datasetTypePawn, relative = true) => {
+    return posibleMovementsObj(
+      datasetTypePawn,
+      this.dataTD,
+      this.gameManageState,
+      relative
+    );
+  };
+
+  /**
+   *
    * @param {Array} dataTD - Array of td about the table
    * @param {Array} gameManageState Array of getState and setState functions of the app's state
  Array of functions - getGamestate and setGameState
    * @param {Array} controlFunction Array of functions - changeDirBoard and initApp
    */
   initEvents(dataTD, gameManageState, controlFunction) {
-    const [changeDirBoard, initApp] = controlFunction;
+    const [changeDirBoard, renderCapturesLists, initApp] = controlFunction;
 
     //init the control of the board
     this.initChessBoardControl(dataTD, gameManageState);
@@ -83,7 +100,12 @@ export class GameEvents {
         const isInDangerPlace = kingState.threats.some(
           (el) => el === curIndex * 1
         );
-        if (isInDangerPlace && type !== "king") return;
+        if (
+          isInDangerPlace &&
+          type !== "king" &&
+          kingState.stateCheck === "check"
+        )
+          return;
 
         /**
          *
@@ -94,7 +116,8 @@ export class GameEvents {
          * @returns undefined if initApp in checkReset fucntion is excauted
          */
         const handleAfterClick = (newDataSetInfo, bool = true) => {
-          this.handleEventsAfterClick(newDataSetInfo, posibleMovementsObj);
+          this.handleEventsAfterClick(newDataSetInfo, renderCapturesLists);
+
           if (this.checkReset(initApp)) return;
           bool && changeDirBoard(this.getGameState());
           this.setGameState(this.getGameState());
@@ -115,14 +138,16 @@ export class GameEvents {
         const [curIndex, type, _, targetColor] = dataSetInfo.split("-");
         const gameState = this.getGameState();
         const kingState = gameState.kingState[targetColor];
-        target.parentElement.classList.add("active");
+        const pawnsCanDefense = gameState.kingState[targetColor].pawnCanDefense;
+        if (pawnsCanDefense) target.parentElement.classList.add("active");
 
         if (targetColor !== gameState.activePlayer) return;
+
         const isInDangerPlace = kingState.threats.some(
           (el) => el === curIndex * 1
         );
         if (isInDangerPlace && type !== "king") return;
-
+        this.handleBeforeClick(dataSetInfo);
         this.handleMouseOver(dataSetInfo, this.dataTD);
       },
       "#container_ChessBoard"
@@ -160,6 +185,10 @@ export class GameEvents {
     );
   }
 
+  handleBeforeClick(newDataSetInfo) {
+    this.checkCastleMoveBeforeClick(newDataSetInfo);
+  }
+
   handlerClickMovement(dataSetInfo, handleAfterClick) {
     let possibleMoves = posibleMovementsObj(dataSetInfo, this.dataTD, [
       this.getGameState,
@@ -177,32 +206,75 @@ export class GameEvents {
   /**
    *
    * @param {String} newDataSetInfo The new typePawn dataset of the pawn that we moved
-   * @param {Function} posibleMovementsObj Function that return the posibbleMovment array of pawn
+   * @param {Function} posibleMovementsObj Function that return the possibleMovment array of pawn
    */
-  handleEventsAfterClick(newDataSetInfo, posibleMovementsObj) {
+  handleEventsAfterClick(newDataSetInfo, renderCapturesLists) {
     const gameState = this.getGameState();
-    this.checkCheckMate(posibleMovementsObj);
+    if (gameState.capturePawns.isChange) {
+      renderCapturesLists([this.getGameState, this.setGameStat]);
+      gameState.capturePawns.isChange = false;
+    }
+    this.checkCastleMoveAfterClick(newDataSetInfo);
+    this.checkCheckMate();
     this.setAfterPlayerTurn(gameState.activePlayer);
     this.setGameState(gameState);
   }
 
-  checkCheckMate(posibleMovementsObj) {
+  checkCastleMoveBeforeClick(newDataSetInfo) {
+    const [index, type, _] = newDataSetInfo.split("-");
+    const Index = index * 1;
+    if (type !== "king" && (Index !== 60 || Index !== 4)) return;
+    const gameState = this.getGameState();
+    const secColor = this.setSecColor(gameState.activePlayer);
+    const kingState = gameState.kingState[secColor];
+    const castleState = kingState.castleState;
+    const threatsOnShort = checkThreatOnPiles(
+      secColor,
+      this.dataTD,
+      [Index + 1, Index + 2, Index + 3],
+      this.possibleMoveWithMode
+    );
+    const threatsOnLong = checkThreatOnPiles(
+      secColor,
+      this.dataTD,
+      [Index - 1, Index - 2, Index - 3],
+      this.possibleMoveWithMode
+    );
+
+    if (threatsOnShort.length > 0) castleState.moveRooks = [true, false];
+    else castleState.moveRooks = [true, true];
+    if (threatsOnLong.length > 0) castleState.moveRooks = [false, true];
+    else castleState.moveRooks = [true, true];
+
+    this.setGameState(gameState);
+  }
+
+  checkCastleMoveAfterClick(newDataSetInfo) {
+    const [curIndex, type, indexPile] = newDataSetInfo.split("-");
+
+    if (type === "rook" && indexPile === 0) castleState.moveRooks[0] = false;
+    if (type === "rook" && indexPile === 7) castleState.moveRooks[1] = false;
+    if (type !== "king") return;
+
+    const gameState = this.getGameState();
+    const castleState = gameState.kingState[gameState.activePlayer].castleState;
+    if (type === "king")
+      if (curIndex === "62") movePawnToOtherPile("63-rook-7-white", [7, 5]);
+      else if (curIndex === "58")
+        movePawnToOtherPile("56-rook-0-white", [7, 3]);
+    if (curIndex === "2") movePawnToOtherPile("0-rook-0-black", [0, 3]);
+    else if (curIndex === "6") movePawnToOtherPile("7-rook-7-black", [0, 5]);
+    castleState.didCastle = true;
+    castleState.moveRooks = [false, false];
+  }
+
+  checkCheckMate() {
     //Get current state
     const gameState = this.getGameState();
 
     // Get the color of the opponent and the state of his king
     const secColor = this.setSecColor(gameState.activePlayer);
     const kingState = gameState.kingState[secColor];
-
-    //Declare an improve possible move function that return the relative moves of the pawns
-    const possibleMove = (newDataSetInfo, relative = true) => {
-      return posibleMovementsObj(
-        newDataSetInfo,
-        this.dataTD,
-        this.gameManageState,
-        relative
-      );
-    };
 
     //Create the datasets of typepawn array from the current table of both players pawns
     //Contains all the data about the pawns of the both players pawns
@@ -223,15 +295,15 @@ export class GameEvents {
     // Get threats moves array  of the pawns that threat on the king
     const threatPawnMoves = checkPawnThreatMove(
       typePawnDataActivePlayer,
-      possibleMove,
+      this.possibleMoveWithMode,
       kingPos * 1
     );
 
     //Get array of threats on the sec king
-    const threatsArr = checkPossibleThreatOfKing(
+    const [threatsArr] = checkPossibleThreatOfKing(
       typePawnDataActivePlayer,
       secKingRelativeMoves,
-      possibleMove
+      this.possibleMoveWithMode
     );
 
     //Assignment the sec color kingstate threats and update the state
@@ -239,17 +311,17 @@ export class GameEvents {
     this.setGameState(gameState);
 
     //Get the current possible move of the sec color kings
-    const kingCurPossibleMove = possibleMove(
+    const kingCurPossibleMove = this.possibleMoveWithMode(
       SecKingColorEl.dataset.typePawn,
       false
     );
 
     //Get the calculated defense moves of other pawns of the sec color in order
     //to cancel the threats and the check.
-    const defenseMove = checkPossibleThreatOfKing(
+    const [defenseMove] = checkPossibleThreatOfKing(
       typePawnDataSecPlayer,
       threatPawnMoves,
-      possibleMove,
+      this.possibleMoveWithMode,
       false
     );
 
@@ -285,7 +357,6 @@ export class GameEvents {
   //Check the current king state of the active player.
   //if the state checkmate and the user input confirm the app will inital state
   // and render the app by initApp function
-
   checkReset(initApp) {
     const gameState = this.getGameState();
     const stateCheck = gameState.kingState[gameState.activePlayer].stateCheck;

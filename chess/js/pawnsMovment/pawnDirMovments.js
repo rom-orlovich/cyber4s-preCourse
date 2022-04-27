@@ -5,7 +5,9 @@ import {
   getDataFromDataSet,
   checkillegalPos,
   checkNumMovesOfPawn,
+  checkIfKingCanCastle,
 } from "./pawnMovementHelpers.js";
+import { posibleMovementsObj } from "./posibleMovmentsRes.js";
 
 /**
  *
@@ -39,9 +41,9 @@ const getRowsColumns = (curIndex, newIndex, arrTD) => {
  * restriction
  * @returns Boolean value or undefined
  */
-export const breakLoop = (curIndex, change, arrTd, color, relativeMoves) => {
+export const breakLoop = (curIndex, change, arrTD, color, relativeMoves) => {
   const newPos = change + curIndex;
-  const nextPileChild = getNextPileChild(curIndex, newPos, arrTd);
+  const nextPileChild = getNextPileChild(curIndex, newPos, arrTD);
   if (!nextPileChild) return;
   const getColorDataSet = getDataFromDataSet(nextPileChild, 3);
   if (relativeMoves && getColorDataSet === color) return true;
@@ -141,7 +143,7 @@ export const bishopMove = (
   lengthLoop,
   curIndex,
   change,
-  arrTd,
+  arrTD,
   color,
   relativeMoves
 ) => {
@@ -150,7 +152,7 @@ export const bishopMove = (
   //Check if the next near move is blocked by other pawn with the same color
   // and in case the possible movment is on relative mode , excuate make array fun
   //otherwise return the empty array
-  const nextPileChild = getNextPileChild(curIndex, curIndex + change, arrTd);
+  const nextPileChild = getNextPileChild(curIndex, curIndex + change, arrTD);
   const getColorDataSet = getDataFromDataSet(nextPileChild, 3);
   return !relativeMoves && getColorDataSet === color
     ? []
@@ -162,11 +164,11 @@ export const bishopMove = (
           obliquePossibleMovment(
             curIndex,
             i * change,
-            arrTd,
+            arrTD,
             color,
             relativeMoves
           ),
-        (i) => breakLoop(curIndex, i * change, arrTd, color, relativeMoves)
+        (i) => breakLoop(curIndex, i * change, arrTD, color, relativeMoves)
       );
 };
 
@@ -175,7 +177,7 @@ export const rookMove = (
   lengthLoop,
   curIndex,
   change,
-  arrTd,
+  arrTD,
   color,
   relativeMoves
 ) => {
@@ -184,7 +186,7 @@ export const rookMove = (
   //Check if the next near move is blocked by other pawn with the same color
   // and in case the possible movment is on relative mode , excuate make array fun
   //otherwise return the empty array
-  const nextPileChild = getNextPileChild(curIndex, curIndex + change, arrTd);
+  const nextPileChild = getNextPileChild(curIndex, curIndex + change, arrTD);
   const getColorDataSet = getDataFromDataSet(nextPileChild, 3);
 
   return !relativeMoves && getColorDataSet === color
@@ -197,11 +199,11 @@ export const rookMove = (
           verticalPossibleMovment(
             curIndex,
             i * change,
-            arrTd,
+            arrTD,
             color,
             relativeMoves
           ),
-        (i) => breakLoop(curIndex, i * change, arrTd, color, relativeMoves)
+        (i) => breakLoop(curIndex, i * change, arrTD, color, relativeMoves)
       );
 };
 
@@ -295,12 +297,12 @@ export const pawnMove = (
   return arr;
 };
 
-const checKnightMove = (curIndex, newIndex, arrTd) => {
+const checKnightMove = (curIndex, newIndex, arrTD) => {
   const {
     newPos: [row, column],
     curPos: [rowNext, columnNext],
     NewIndex,
-  } = getRowsColumns(curIndex, newIndex, arrTd);
+  } = getRowsColumns(curIndex, newIndex, arrTD);
   //Check if the ratio between the new row and coulmn
   //and the current row and coulmn are 1/2;
   if (
@@ -316,16 +318,16 @@ export const knightMove = (
   type,
   curIndex,
   changes,
-  arrTd,
+  arrTD,
   color,
   relativeMoves
 ) => {
   if (type !== "knight") return [];
   return changes.map((change) => {
     const CurIndex = curIndex * 1;
-    const NewIndex = checKnightMove(curIndex, CurIndex + change, arrTd);
+    const NewIndex = checKnightMove(curIndex, CurIndex + change, arrTD);
     //Check if the new pile is empty
-    const checkNextPileChild = arrTd[NewIndex];
+    const checkNextPileChild = arrTD[NewIndex];
     if (!checkNextPileChild) return CurIndex;
 
     //Check if the new pile have img
@@ -341,10 +343,11 @@ export const knightMove = (
   });
 };
 
-export const kingMove = (typePawn, arrTd, gameManageState, relativeMoves) => {
+export const kingMove = (typePawn, arrTD, gameManageState, relativeMoves) => {
   const [index, type, _, color] = typePawn;
 
   if (type !== "king") return [];
+
   // The king need to access the king state: cur possibleMoves and threats
   const [getGameState, setGameState] = gameManageState;
   const gameState = getGameState();
@@ -352,29 +355,41 @@ export const kingMove = (typePawn, arrTd, gameManageState, relativeMoves) => {
   const kingStateByColor = kingState[color];
   const curPosisbleMove = kingStateByColor.possibleMoves;
   const curThreatArr = kingStateByColor.threats;
-
+  const castleState = kingStateByColor.castleState;
   const curIndex = index * 1;
   const newPossibleMove = [];
   let curThreat, curThreatInPos;
-  curPosisbleMove.forEach((pm) => {
-    curThreat = curThreatArr.some((threat) => threat === pm);
 
+  curPosisbleMove.forEach((pm) => {
     // For each cur possible move, check if there is some threat on the king
     //and if the threat is same as his possible move
-    if (!curThreatInPos)
-      curThreatInPos = curThreatArr.some(
-        (threat) => threat === pm && threat === curIndex
-      );
+    curThreat = curThreatArr.some((threat) => threat === pm);
+    curThreatInPos = curThreatArr.some((threat) => threat === curIndex);
 
     //check it the next pile is empty and the color is different
     //and the reltaive move mode is active
     //if it is true push tu new possible move
-    const nextPileChild = getNextPileChild(curIndex, pm, arrTd);
+    const nextPileChild = getNextPileChild(curIndex, pm, arrTD);
+
     const colorDataSet = getDataFromDataSet(nextPileChild, 3);
+
     if (!colorDataSet && !curThreat) newPossibleMove.push(pm);
     if (colorDataSet && colorDataSet !== color) newPossibleMove.push(pm);
     else if (relativeMoves) newPossibleMove.push(pm);
   });
+
+  //Check if the king did castle
+  if (!castleState.didCastle) {
+    const [rook1, rook2] = castleState.moveRooks;
+    //Check the if there aren't player in the first and the sec nearby piles
+    //for the both sides of the king
+
+    checkIfKingCanCastle(curIndex, curIndex - 2, rook1, arrTD) &&
+      newPossibleMove.push(curIndex - 2);
+
+    checkIfKingCanCastle(curIndex, curIndex + 2, rook2, arrTD) &&
+      newPossibleMove.push(curIndex + 2);
+  }
 
   // The check if there is some threat on the king
   //and change the state of check

@@ -54,7 +54,11 @@ export const handleClickPawn = (
 
       //Move pawn to other piles if
       const indexPosTDClick = target?.dataset?.indexPos;
-      let dataInfo = movePawnToOtherPile(typePawn, indexPosTDClick);
+      let dataInfo = movePawnToOtherPile(
+        typePawn,
+        indexPosTDClick,
+        gameManageState
+      );
 
       //If there is no dataset that return from the move function , the function will exit
       if (!dataInfo) return;
@@ -67,6 +71,7 @@ export const handleClickPawn = (
         gameState.kingState[color].pos = dataInfo.split("-")[0];
         setGameState(gameState);
       }
+
       // see the function in GameEvent file on line 96
       handleAfterClick(dataInfo);
     });
