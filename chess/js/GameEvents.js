@@ -124,7 +124,11 @@ export class GameEvents {
          * move of player
          * @returns undefined if initApp in checkReset fucntion is excauted
          */
-        const handleAfterClick = (newDataSetInfo, bool = true) => {
+        const handleAfterClick = (
+          newDataSetInfo,
+          possibleMovment,
+          bool = true
+        ) => {
           this.handleEventsAfterClick(newDataSetInfo, renderCapturesLists);
           // this.setLastTurn(dataSetInfo, newDataSetInfo);
           if (this.checkReset(initApp, renderCapturesLists)) return;

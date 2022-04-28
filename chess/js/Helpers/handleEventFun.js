@@ -25,6 +25,10 @@ export const handlePosibleMovment = (
       : arrTD[change].classList.remove("active");
   });
 };
+// const removeClass = (className, posibleMoves, arr) => {
+//   // arr.forEach((el) => el.classList.remove(className));
+//   posibleMoves.forEach((el) => arr[el].classList.remove(className));
+// };
 
 /**
  *
@@ -46,6 +50,7 @@ export const handleClickPawn = (
   let [CurIndex, type, _, color] = typePawn.split("-");
   const [getGameState, setGameState] = gameManageState;
   const gameState = getGameState();
+
   posibleMoves.forEach((el) => {
     arrTD[el].addEventListener("click", (e) => {
       //Check if the td is clicked
@@ -62,7 +67,6 @@ export const handleClickPawn = (
 
       //If there is no dataset that return from the move function , the function will exit
       if (!dataInfo) return;
-
       // Set the new number moves of the pawns if he was moved
       if (type === "pawn") editDatasSetByQuery(el, 4, "1");
 
@@ -73,7 +77,7 @@ export const handleClickPawn = (
       }
 
       // see the function in GameEvent file on line 96
-      handleAfterClick(dataInfo);
+      handleAfterClick(dataInfo, posibleMoves);
     });
   });
 };
