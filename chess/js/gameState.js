@@ -1,11 +1,9 @@
 export const gameStateInital = {
+  dataTD: [],
   boardDir: 1,
   playerTurns: [0, 0],
   activePlayer: "white",
-  lastTurn: {
-    white: [],
-    black: [],
-  },
+  lastTurn: [],
   kingState: {
     white: {
       pos: 60,

@@ -60,14 +60,3 @@ export class CapturePawnsList {
     }
   }
 }
-
-// const secActivePlayer =gameState.activePlayer === "white"
-// ? "rightBottomCornerCapture"
-// : "leftTopCornerCapture";
-// console.log(secActivePlayer);
-// const currentPlayer = gameState.activePlayer;
-// const currentId =
-//   currentPlayer === "white" ? "blackCaptrues" : "whiteCaptrues";
-// const currentPlayer = gameState.activePlayer;
-// const currentId =
-//   currentPlayer === "white" ? "whiteCaptrues" : "blackCapture";

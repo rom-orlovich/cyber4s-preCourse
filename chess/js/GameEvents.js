@@ -237,14 +237,9 @@ export class GameEvents {
     this.changeRegularPawns(newDataSetInfo);
     this.checkCheckMate();
     this.setAfterPlayerTurn(gameState.activePlayer);
+    gameState.dataTD = this.dataTD;
     this.setGameState(gameState);
   }
-  //   setLastTurn(oldDataSetInfo,newDataSetInfo) {
-  // const gameState=this.getGameState();
-  //     const [oldIndex,color] = oldDataSetInfo.split("-");
-  //     const [newIndex] = newDataSetInfo.split("-");
-
-  //   }
 
   changeRegularPawns(newDataSetInfo) {
     const [curIndex, type, pawnIndex, color] = newDataSetInfo.split("-");
@@ -289,13 +284,13 @@ export class GameEvents {
     const kingState = gameState.kingState[secColor];
     const castleState = kingState.castleState;
     const threatsOnShort = checkThreatOnPiles(
-      secColor,
+      gameState.activePlayer,
       this.dataTD,
       [CurIndex + 1, CurIndex + 2, CurIndex + 3],
       this.possibleMoveWithMode
     );
     const threatsOnLong = checkThreatOnPiles(
-      secColor,
+      gameState.activePlayer,
       this.dataTD,
       [CurIndex - 1, CurIndex - 2, CurIndex - 3],
       this.possibleMoveWithMode
@@ -319,11 +314,14 @@ export class GameEvents {
     const gameState = this.getGameState();
     const castleState = gameState.kingState[gameState.activePlayer].castleState;
     if (type === "king")
-      if (curIndex === "62") movePawnToOtherPile("63-rook-7-white", [7, 5]);
+      if (curIndex === "62")
+        movePawnToOtherPile("63-rook-7-white", [7, 5], this.gameManageState);
       else if (curIndex === "58")
-        movePawnToOtherPile("56-rook-0-white", [7, 3]);
-    if (curIndex === "2") movePawnToOtherPile("0-rook-0-black", [0, 3]);
-    else if (curIndex === "6") movePawnToOtherPile("7-rook-7-black", [0, 5]);
+        movePawnToOtherPile("56-rook-0-white", [7, 3], this.gameManageState);
+    if (curIndex === "2")
+      movePawnToOtherPile("0-rook-0-black", [0, 3], this.gameManageState);
+    else if (curIndex === "6")
+      movePawnToOtherPile("7-rook-7-black", [0, 5], this.gameManageState);
     castleState.didCastle = true;
     castleState.moveRooks = [false, false];
   }

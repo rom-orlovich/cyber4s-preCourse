@@ -1,21 +1,24 @@
-import { ButtonControlInit } from "./ButtonsControl.js";
 import { GameEvents } from "./GameEvents.js";
 import { ChessBoard } from "./ChessBoard.js";
 import { state } from "./State.js";
 import { objDeepCopy } from "./Helpers/utilitesFun.js";
 import { gameStateInital } from "./gameState.js";
-import { movePawnToOtherPile } from "./pawnsMovment/pawnMovementHelpers.js";
 import { CapturePawnsList } from "./CapturePawnsList.js";
+import { MemoryButtons } from "./MemoryButtons.js";
 
 const initApp = (reRender = false) => {
+  const stateM = new state();
   const chess = new ChessBoard();
   const gameEvents = new GameEvents();
-  const stateM = new state();
 
   const [getGameState, setGameState] = stateM.useState(
     objDeepCopy(gameStateInital)
   );
   const capturePawnsList = new CapturePawnsList([getGameState, setGameState]);
+  const memoryButtons = new MemoryButtons(
+    [getGameState, setGameState],
+    chess.changeDirBoard.bind(chess)
+  );
   gameEvents.initEvents(
     chess.tdBoardChess,
     [getGameState, setGameState],

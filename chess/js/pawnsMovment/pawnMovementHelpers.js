@@ -125,11 +125,27 @@ export const movePawnToOtherPile = (typePawn, newPos, gameManageState) => {
   // and append the new img.
   if (!img) {
     choosenTD.appendChild(choosenImg);
+    gameState.lastTurn.push({
+      activePlayer: gameState.activePlayer,
+      preDataPawn: typePawn,
+      nextDataPawn: choosenImg.dataset.typePawn,
+      eatPawn: undefined,
+      eatPawnDataset: undefined,
+      classList: undefined,
+    });
   } else {
     let color1 = getDataFromDataSet(img, 3);
     if (color1 !== color) choosenTD.removeChild(img);
     gameState.capturePawns[color].push(img);
     gameState.capturePawns.isChange = true;
+    gameState.lastTurn.push({
+      activePlayer: gameState.activePlayer,
+      preDataPawn: typePawn,
+      nextDataPawn: choosenImg.dataset.typePawn,
+      eatPawn: img,
+      eatPawnDataset: img.dataset.typePawn,
+      classList: img.classList,
+    });
     choosenTD.appendChild(choosenImg);
   }
 
