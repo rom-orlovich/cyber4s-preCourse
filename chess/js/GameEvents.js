@@ -28,8 +28,6 @@ export class GameEvents {
   gameManageState;
   setState;
 
-  constructor() {}
-
   setSecColor(color) {
     return color === "white" ? "black" : "white";
   }

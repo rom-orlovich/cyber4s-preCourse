@@ -1,61 +1,66 @@
 import { editDataSet } from "./Helpers/utilitesFun.js";
 
 export class MemoryButtons {
-  constructor(gameManageState, changeDirBoard) {
-    this.initMemoryButtons(gameManageState);
-    this.nextTurn = [];
+  constructor(gameManageState, changeDirBoard, capturePawnsRender) {
+    const [getGamestate, setGameState] = gameManageState;
+
+    this.getGameState = getGamestate;
+    this.setGameState = setGameState;
+    this.initMemoryButtons();
+
     this.changeDirBoard = changeDirBoard;
+    this.capturePawnsRender = capturePawnsRender;
   }
 
-  initMemoryButtons(gameManageState) {
-    const [getGameState, setGameState] = gameManageState;
-    this.nextTurn = [];
-    const gameState = getGameState();
+  initMemoryButtons() {
+    this.nextTurns = [];
+    this.preTurns = [];
+    const gameState = this.getGameState();
     console.log(gameState);
     window.addEventListener("keydown", (e) => {
       e.preventDefault();
-
       this.dataTD = gameState.dataTD;
-      e.key === "ArrowRight" && this.moveNext(gameState);
-      e.key === "ArrowLeft" && this.moveBack(gameState);
+      e.key === "ArrowRight" && this.moveNext();
+      e.key === "ArrowLeft" && this.moveBack();
     });
   }
 
-  moveNext(gameState) {
-    if (this.nextTurn.length === 0) return;
-    const nextTurn = this.nextTurn.pop();
-    const { preDataPawn, nextDataPawn, eatPawn, eatPawnDataset } = nextTurn;
+  moveNext() {
+    const gameState = this.getGameState();
+    if (this.nextTurns.length === 0) return;
+    const lastTurnArray = gameState.lastTurn;
+    const nextTurn = this.nextTurns.pop();
+    lastTurnArray.push(nextTurn);
+    this.preTurns.push(nextTurn);
+    const { preDataPawn, nextDataPawn, eatPawn, eatPawnDataset, activePlayer } =
+      nextTurn;
     if (!eatPawn) this.regularMove(nextDataPawn, preDataPawn);
-    else this.eatMove(nextDataPawn, preDataPawn, eatPawnDataset);
+    else this.eatMove(nextDataPawn, preDataPawn, eatPawn, eatPawnDataset);
+    gameState.activePlayer = activePlayer;
     this.changeDirBoard(gameState);
   }
 
-  moveBack(gameState) {
+  moveBack() {
+    const gameState = this.getGameState();
     const lastTurnArray = gameState.lastTurn;
     if (lastTurnArray.length === 0) return;
-    const lastTurn = lastTurnArray.pop();
-    this.nextTurn.push(lastTurn);
+    this.preTurns.push(lastTurnArray.pop());
+    if (this.preTurns.length === 0) return;
+    const lastTurn = this.preTurns.pop();
+    this.nextTurns.push(lastTurn);
     const { preDataPawn, nextDataPawn, eatPawn, eatPawnDataset, activePlayer } =
       lastTurn;
     if (!eatPawn) this.regularMove(preDataPawn, nextDataPawn);
     else this.eatMove(preDataPawn, nextDataPawn, eatPawn, eatPawnDataset);
+    gameState.activePlayer = activePlayer;
     this.changeDirBoard(gameState);
   }
-
-  getDataAboutMove(preDataPawn, nextDataPawn) {
-    const [preIndex] = preDataPawn.split("-");
-    const [nextIndex] = nextDataPawn.split("-");
-
-    const img = this.dataTD[nextIndex]?.firstElementChild;
-
-    return { preIndex, nextIndex, img };
-  }
-
   regularMove(preDataPawn, nextDataPawn) {
     const { preIndex, nextIndex, img } = this.getDataAboutMove(
       preDataPawn,
       nextDataPawn
     );
+    if (!img) return;
     img.dataset.typePawn = editDataSet(nextDataPawn, 0, preIndex);
     this.dataTD[preIndex].appendChild(img);
   }
@@ -65,15 +70,20 @@ export class MemoryButtons {
       preDataPawn,
       nextDataPawn
     );
-
     this.dataTD[nextIndex]?.firstElementChild.remove();
     eatPawn.dataset.typePawn = eatPawnDataset;
     eatPawn.className = "";
     eatPawn.classList.add("center-abs", "rotate180Img");
-    this.dataTD[nextIndex].appendChild(eatPawn);
+    this.dataTD[nextIndex]?.appendChild(eatPawn);
 
     img.dataset.typePawn = editDataSet(nextDataPawn, 0, preIndex);
     this.dataTD[preIndex].appendChild(img);
-    // console.log(this.dataTD[nextIndex]);
+  }
+
+  getDataAboutMove(preDataPawn, nextDataPawn) {
+    const [preIndex] = preDataPawn.split("-");
+    const [nextIndex] = nextDataPawn.split("-");
+    const img = this.dataTD[nextIndex]?.firstElementChild;
+    return { preIndex, nextIndex, img };
   }
 }

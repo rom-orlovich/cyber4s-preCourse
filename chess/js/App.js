@@ -17,7 +17,8 @@ const initApp = (reRender = false) => {
   const capturePawnsList = new CapturePawnsList([getGameState, setGameState]);
   const memoryButtons = new MemoryButtons(
     [getGameState, setGameState],
-    chess.changeDirBoard.bind(chess)
+    chess.changeDirBoard.bind(chess),
+    capturePawnsList.render.bind(capturePawnsList)
   );
   gameEvents.initEvents(
     chess.tdBoardChess,

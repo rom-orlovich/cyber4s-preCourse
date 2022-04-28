@@ -1,3 +1,7 @@
+:root {
+  --sizeTable: 95vh;
+}
+
 body {
   height: 100vh;
   width: 100vw;
@@ -11,8 +15,9 @@ body {
   position: relative;
 }
 #container_ChessBoard {
-  width: 100vh;
-  height: 100vh;
+  margin-top: 1rem;
+  width: var(--sizeTable);
+  height: var(--sizeTable);
   background-color: rgba(188, 188, 193);
 }
 
