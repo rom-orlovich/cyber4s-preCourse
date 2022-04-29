@@ -50,13 +50,11 @@ export class CapturePawnsList {
     let whiteCapturePawns, blackCapturePawns;
     const gameState = getGameState();
     if (rest) {
-      document
-        .querySelectorAll(".capture_block div")
-        .forEach((el) => (el.innerHTML = ""));
-    } else {
-      whiteCapturePawns = this.whiteCapturePawns(gameState, rest);
-      blackCapturePawns = this.blackCapturePawns(gameState, rest);
-      document.body.append(whiteCapturePawns, blackCapturePawns);
+      document.querySelectorAll(".capture_block ").forEach((el) => el.remove());
     }
+    whiteCapturePawns = this.whiteCapturePawns(gameState, rest);
+    blackCapturePawns = this.blackCapturePawns(gameState, rest);
+
+    document.body.append(whiteCapturePawns, blackCapturePawns);
   }
 }

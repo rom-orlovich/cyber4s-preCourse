@@ -205,7 +205,7 @@ export class GameEvents {
     const gameState = this.getGameState();
 
     if (gameState.capturePawns.isChange) {
-      renderCapturesLists([this.getGameState, this.setGameStat]);
+      renderCapturesLists([this.getGameState, this.setGameStat], true);
       gameState.capturePawns.isChange = false;
     }
     this.checkCastleMoveAfterClick(newDataSetInfo);

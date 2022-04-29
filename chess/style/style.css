@@ -1,11 +1,15 @@
 :root {
-  --sizeTable: 95vh;
+  --sizeTable: 70vh;
+  --tdSize: 35px;
 }
 
 body {
   height: 100vh;
   width: 100vw;
   position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 #container_game {
@@ -13,11 +17,12 @@ body {
   justify-content: center;
   align-items: center;
   position: relative;
+  width: var(--sizeTable);
+  height: var(--sizeTable);
 }
 #container_ChessBoard {
   margin-top: 1rem;
-  width: var(--sizeTable);
-  height: var(--sizeTable);
+  padding: 0.5rem 0;
   background-color: rgba(188, 188, 193);
 }
 
@@ -43,8 +48,8 @@ td {
 td {
   position: relative;
   text-align: center;
-  height: 50px;
-  width: 50px;
+  height: var(--tdSize);
+  width: var(--tdSize);
 }
 /* black square  */
 table tr:nth-child(odd) td:nth-child(even),
@@ -52,12 +57,6 @@ table tr:nth-child(even) td:nth-child(odd) {
   background-color: rgba(27, 27, 27, 0.7);
   border: 0.5px solid rgba(27, 27, 27, 1);
 }
-
-/* white square 
-table tr:nth-child(2n) td:nth-child(2n + 1),
-table tr:nth-child(2n + 1) td:nth-child(2n) {
-  border: 1px solid rgba(27, 27, 27, 0.5);
-} */
 
 /* buttons controls*/
 #buttons_control {
@@ -95,9 +94,6 @@ button:hover {
 }
 /*pawn active*/
 
-/* .rotate0Img {
-  transform: rotate(0deg) translate(-50%, -50%);
-} */
 .rotate180Img {
   transform: translate(-50%, -50%) rotate(180deg);
 }
@@ -107,21 +103,11 @@ button:hover {
 
 .rotate180 {
   transform: rotate(180deg);
-  /* transition: transform 1s; */
 }
 .rotate0 {
   transform: rotate(0deg);
-  /* transition: transform 1s; */
 }
-/* @keyframes rotate {
-  0% {
-  }
-  50% {
-  }
 
-  100% {
-  }
-} */
 .active {
   background-color: #2e2eb561 !important;
 }
@@ -135,51 +121,128 @@ td:hover {
 
 .capture_block {
   position: absolute;
-  width: calc((100vw - var(--sizeTable)) / 2.2);
-  height: 30%;
+
+  min-width: fit-content;
+  min-height: fit-content;
+  height: 5rem;
   border-radius: 5px;
-  /* border: 1px solid rgb(108, 106, 106); */
+
+  top: 5%;
   padding: 1rem;
   box-shadow: 0 2px 2px 2px rgba(27, 27, 27, 0.05);
 }
+
 #whiteCaptrues {
-  top: 5%;
-  right: 1%;
+  right: 3%;
 }
 
 #blackCaptrues {
-  top: 5%;
-  left: 1%;
+  left: 3%;
 }
 
-#whiteCaptrues h1,
-#blackCaptrues h1 {
+.capture_block h1 {
   text-align: center;
   font-weight: 400;
 
-  font-size: 1.7rem;
+  font-size: 0.8rem;
 }
 
 .Capture_img {
   position: static;
 
-  width: 40px;
-  height: 40px;
+  width: calc(var(--tdSize) * 0.8);
+  height: calc(var(--tdSize) * 0.8);
 }
 
 .buttons_preNext {
   position: absolute;
   width: 20rem;
-  /* top: 94%;
-  left: 50%;
-  transform: translate(-50%, -50%); */
-  top: 40%;
-  right: 1%;
+
+  inset: auto auto 8% 50%;
+  transform: translate(-50%, -50%);
+
   display: flex;
   justify-content: space-around;
 }
 .buttons_preNext button {
   color: #273256;
-  width: 8rem;
+  font-size: 0.5rem;
+  padding: 0.6rem 0;
+  width: 5rem;
   background-color: rgb(172, 172, 192);
+}
+
+@media screen and (min-width: 600px) {
+  :root {
+    --sizeTable: 95vh;
+
+    --tdSize: 50px;
+  }
+
+  body {
+    height: 100vh;
+    width: 100vw;
+    position: relative;
+  }
+
+  #container_ChessBoard {
+    width: var(--sizeTable);
+    height: var(--sizeTable);
+    background-color: rgba(188, 188, 193);
+  }
+
+  td {
+    height: var(--tdSize);
+    width: var(--tdSize);
+  }
+
+  .capture_block {
+    position: absolute;
+    width: calc((100vw - var(--sizeTable)) / 2.2);
+    min-width: fit-content;
+    min-height: fit-content;
+    height: 30%;
+    border-radius: 5px;
+
+    padding: 1rem;
+    box-shadow: 0 2px 2px 2px rgba(27, 27, 27, 0.05);
+  }
+
+  .capture_block h1 {
+    text-align: center;
+    font-weight: 400;
+    font-size: 1.7rem;
+  }
+  #whiteCaptrues {
+    top: 5%;
+    right: 1%;
+  }
+
+  #blackCaptrues {
+    top: 5%;
+    left: 1%;
+  }
+  .Capture_img {
+    position: static;
+    width: calc(var(--tdSize) * 0.8);
+    height: calc(var(--tdSize) * 0.8);
+  }
+
+  .buttons_preNext {
+    position: absolute;
+    width: 18rem;
+    inset: 40% 1% auto auto;
+    transform: translate(0%, 0%);
+    display: flex;
+    justify-content: space-around;
+  }
+  .buttons_preNext button {
+    padding: 0.6rem 0;
+    height: 3rem;
+    font-size: 0.9rem;
+    width: 1rem;
+    color: #273256;
+    width: 8rem;
+    background-color: rgb(172, 172, 192);
+  }
 }

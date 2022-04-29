@@ -24,7 +24,6 @@ export class MemoryButtons {
       e.key === "ArrowRight" && this.moveNext();
       e.key === "ArrowLeft" && this.moveBack();
     });
-
     this.renderButtons();
     //Button contorl
     addEventListenerByQuery(
