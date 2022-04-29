@@ -158,7 +158,7 @@ td:hover {
   position: absolute;
   width: 20rem;
 
-  inset: auto auto 8% 50%;
+  inset: auto auto 10% 50%;
   transform: translate(-50%, -50%);
 
   display: flex;
