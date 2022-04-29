@@ -54,7 +54,7 @@ export class GameEvents {
 
         //Check if the target is pawn with dataset of typePawn otherwise -exit from the function
         if (!dataSetInfo) return;
-        console.log(dataSetInfo);
+
         //Get data about the pawns from his dataset of typePawn
         const [curIndex, type, _, targetColor] = dataSetInfo.split("-");
         const gameState = this.getGameState();
@@ -72,7 +72,7 @@ export class GameEvents {
         // const isInDangerPlace =
         //   kingState.relativeThreats.includes(curIndex * 1) &&
         //   kingState.relativeThreats.includes(kingState.pos);
-        console.log(dataSetInfo);
+
         if (
           kingState.stateCheck === "check" &&
           type !== "king" &&
@@ -203,7 +203,7 @@ export class GameEvents {
    */
   handleEventsAfterClick(newDataSetInfo, renderCapturesLists) {
     const gameState = this.getGameState();
-    console.log(gameState);
+
     if (gameState.capturePawns.isChange) {
       renderCapturesLists([this.getGameState, this.setGameStat]);
       gameState.capturePawns.isChange = false;
