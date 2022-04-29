@@ -135,7 +135,7 @@ td:hover {
 
 .capture_block {
   position: absolute;
-  width: calc((100vw - 100vh) / 2.2);
+  width: calc((100vw - var(--sizeTable)) / 2.2);
   height: 30%;
   border-radius: 5px;
   /* border: 1px solid rgb(108, 106, 106); */
@@ -165,4 +165,21 @@ td:hover {
 
   width: 40px;
   height: 40px;
+}
+
+.buttons_preNext {
+  position: absolute;
+  width: 20rem;
+  /* top: 94%;
+  left: 50%;
+  transform: translate(-50%, -50%); */
+  top: 40%;
+  right: 1%;
+  display: flex;
+  justify-content: space-around;
+}
+.buttons_preNext button {
+  color: #273256;
+  width: 8rem;
+  background-color: rgb(172, 172, 192);
 }

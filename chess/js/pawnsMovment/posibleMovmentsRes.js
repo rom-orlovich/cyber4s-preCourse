@@ -1,3 +1,4 @@
+import { makeArrayToSet } from "../Helpers/utilitesFun.js";
 import {
   bishopMove,
   kingMove,
@@ -75,5 +76,6 @@ export const posibleMovementsObj = (
     king: kingMove(typePawnArr, arrTD, gameManageState, relativeMoves),
   };
 
-  return [...res[type]];
+  // return [...res[type]];
+  return makeArrayToSet(res[type]);
 };

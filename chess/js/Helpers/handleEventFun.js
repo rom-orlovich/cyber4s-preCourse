@@ -25,10 +25,6 @@ export const handlePosibleMovment = (
       : arrTD[change].classList.remove("active");
   });
 };
-// const removeClass = (className, posibleMoves, arr) => {
-//   // arr.forEach((el) => el.classList.remove(className));
-//   posibleMoves.forEach((el) => arr[el].classList.remove(className));
-// };
 
 /**
  *

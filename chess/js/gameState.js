@@ -3,7 +3,7 @@ export const gameStateInital = {
   boardDir: 1,
   playerTurns: [0, 0],
   activePlayer: "white",
-  lastTurn: [],
+  lastTurns: [],
   kingState: {
     white: {
       pos: 60,

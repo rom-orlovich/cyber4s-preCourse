@@ -15,11 +15,7 @@ const initApp = (reRender = false) => {
     objDeepCopy(gameStateInital)
   );
   const capturePawnsList = new CapturePawnsList([getGameState, setGameState]);
-  const memoryButtons = new MemoryButtons(
-    [getGameState, setGameState],
-    chess.changeDirBoard.bind(chess),
-    capturePawnsList.render.bind(capturePawnsList)
-  );
+
   gameEvents.initEvents(
     chess.tdBoardChess,
     [getGameState, setGameState],
@@ -28,6 +24,11 @@ const initApp = (reRender = false) => {
       capturePawnsList.render.bind(capturePawnsList),
       initApp,
     ]
+  );
+  const memoryButtons = new MemoryButtons(
+    [getGameState, setGameState],
+    chess.changeDirBoard.bind(chess),
+    capturePawnsList.render.bind(capturePawnsList)
   );
   reRender && chess.changeDirBoard(getGameState());
 };

@@ -101,6 +101,7 @@ export const movePawnToOtherPile = (typePawn, newPos, gameManageState) => {
   const choosenImg = selectElement(
     `img[data-type-pawn*="${index}-${type}-${number}-${color}"]`
   );
+
   const choosenTD = selectElement(`td[data-index-pos*="${newPos}"]`);
 
   //If there are no td nor img element exit from the function
@@ -125,26 +126,32 @@ export const movePawnToOtherPile = (typePawn, newPos, gameManageState) => {
   // and append the new img.
   if (!img) {
     choosenTD.appendChild(choosenImg);
-    gameState.lastTurn.push({
+    gameState.lastTurns.push({
+      type: "regularMove",
       activePlayer: gameState.activePlayer,
       preDataPawn: typePawn,
       nextDataPawn: choosenImg.dataset.typePawn,
-      eatPawn: undefined,
-      eatPawnDataset: undefined,
-      classList: undefined,
+
+      eatPawnData: undefined,
     });
   } else {
     let color1 = getDataFromDataSet(img, 3);
     if (color1 !== color) choosenTD.removeChild(img);
+
+    //add to capturePawnsList and change its status
     gameState.capturePawns[color].push(img);
     gameState.capturePawns.isChange = true;
-    gameState.lastTurn.push({
+
+    //Add to  last turns array
+    gameState.lastTurns.push({
+      type: "eatMove",
       activePlayer: gameState.activePlayer,
       preDataPawn: typePawn,
       nextDataPawn: choosenImg.dataset.typePawn,
-      eatPawn: img,
-      eatPawnDataset: img.dataset.typePawn,
-      classList: img.classList,
+      eatPawnData: {
+        imgEatPawn: img,
+        eatPawnDataset: img.dataset.typePawn,
+      },
     });
     choosenTD.appendChild(choosenImg);
   }
