@@ -51,6 +51,7 @@ export const handleClickPawn = (
     arrTD[el].addEventListener("click", (e) => {
       //Check if the td is clicked
       const target = e.currentTarget;
+
       if (!target) return;
 
       //Move pawn to other piles and return the current dataset

@@ -20,7 +20,6 @@ export class MemoryButtons {
     this.dataTD = gameState.dataTD;
     //KeyBoard contorl
     document.addEventListener("keydown", (e) => {
-      e.preventDefault();
       e.key === "ArrowRight" && this.moveNext();
       e.key === "ArrowLeft" && this.moveBack();
     });

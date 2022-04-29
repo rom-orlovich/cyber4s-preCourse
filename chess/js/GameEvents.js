@@ -50,11 +50,11 @@ export class GameEvents {
       "click",
       (e) => {
         const target = e.target;
-        const dataSetInfo = target.dataset.typePawn;
+        const dataSetInfo = target?.dataset?.typePawn;
 
         //Check if the target is pawn with dataset of typePawn otherwise -exit from the function
         if (!dataSetInfo) return;
-
+        console.log(dataSetInfo);
         //Get data about the pawns from his dataset of typePawn
         const [curIndex, type, _, targetColor] = dataSetInfo.split("-");
         const gameState = this.getGameState();
@@ -112,6 +112,8 @@ export class GameEvents {
         const target = e.target;
         const dataSetInfo = target?.dataset?.typePawn;
         if (!dataSetInfo) return;
+
+        console.log(dataSetInfo);
         const [curIndex, type, _, targetColor] = dataSetInfo.split("-");
         const gameState = this.getGameState();
         const kingState = gameState.kingState[targetColor];
