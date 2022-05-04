@@ -143,6 +143,7 @@ export class GameEvents {
         });
         if (indexDefense === curIndex * 1) return;
         this.handleBeforeClick(dataSetInfo);
+
         this.handleMouseOver(dataSetInfo, this.dataTD);
       },
       "#container_ChessBoard"
@@ -258,25 +259,27 @@ export class GameEvents {
     if (type !== "king" && (CurIndex !== 60 || CurIndex !== 4)) return;
     const gameState = this.getGameState();
     const secColor = this.setSecColor(gameState.activePlayer);
-    const kingState = gameState.kingState[secColor];
+    const kingState = gameState.kingState[gameState.activePlayer];
     const castleState = kingState.castleState;
     const threatsOnShort = checkThreatOnPiles(
-      gameState.activePlayer,
+      secColor,
       this.dataTD,
       [CurIndex + 1, CurIndex + 2, CurIndex + 3],
       this.possibleMoveWithMode
     );
     const threatsOnLong = checkThreatOnPiles(
-      gameState.activePlayer,
+      secColor,
       this.dataTD,
       [CurIndex - 1, CurIndex - 2, CurIndex - 3],
       this.possibleMoveWithMode
     );
 
-    if (threatsOnShort.length > 0) castleState.moveRooks = [true, false];
-    else castleState.moveRooks = [true, true];
-    if (threatsOnLong.length > 0) castleState.moveRooks = [false, true];
-    else castleState.moveRooks = [true, true];
+    if (threatsOnShort.length === 0 && threatsOnLong.length === 0)
+      castleState.moveRooks = [true, true];
+    if (threatsOnShort.length > 0) castleState.moveRooks[1] = false;
+    else castleState.moveRooks[1] = true;
+    if (threatsOnLong.length > 0) castleState.moveRooks[0] = false;
+    else castleState.moveRooks[0] = true;
 
     this.setGameState(gameState);
   }
@@ -388,9 +391,10 @@ export class GameEvents {
     //if the game continue ,assign the new possible move to the sec color king state
     //And the new game state
     kingState.possibleMoves = checkKingPossibleMove(
-      absoluteThreatsArr,
+      relativeThreatsArr,
       secKingRelativeMoves
     );
+
     kingState.pawnCanDefense = dataPawnMove;
     this.setGameState(gameState);
   }

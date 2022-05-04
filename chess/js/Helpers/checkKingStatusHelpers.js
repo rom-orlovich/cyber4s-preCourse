@@ -65,6 +65,7 @@ export const checkPossibleThreatOfKing = (
     if (sameValue.length === 0) return;
 
     threatArr = [...threatArr, ...sameValue];
+    console.log(threatArr);
     dataPawnMove.push(data);
   });
   return [threatArr, dataPawnMove];
@@ -118,8 +119,8 @@ export const checkThreatOnPiles = (
   arrPos,
   possibleMovmenWithMode
 ) => {
-  const setColor = color === "white" ? "black" : "white";
-  const dataOfSecPlayerPawn = getDataAboutPawns(setColor, arrTD);
+  // const setColor = color === "white" ? "black" : "white";
+  const dataOfSecPlayerPawn = getDataAboutPawns(color, arrTD);
   let sameValueRes = [];
 
   dataOfSecPlayerPawn.forEach((dataset) => {

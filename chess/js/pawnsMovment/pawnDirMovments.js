@@ -356,17 +356,19 @@ export const kingMove = (typePawn, arrTD, gameManageState, relativeMoves) => {
   const { kingState } = gameState;
   const kingStateByColor = kingState[color];
   const curPosisbleMove = kingStateByColor.possibleMoves;
-  const curThreatArr = kingStateByColor.absoluteThreats;
+
+  const curThreatArrAbs = kingStateByColor.absoluteThreats;
   const castleState = kingStateByColor.castleState;
   const curIndex = index * 1;
   const newPossibleMove = [];
-  let curThreat, curThreatInPos;
+  let curThreatAbs, curThreatRel, curThreatInPos;
 
   curPosisbleMove.forEach((pm) => {
     // For each cur possible move, check if there is some threat on the king
     //and if the threat is same as his possible move
-    curThreat = curThreatArr.includes(pm);
-    curThreatInPos = curThreatArr.includes(curIndex);
+    curThreatAbs = curThreatArrAbs.includes(pm);
+
+    curThreatInPos = curThreatArrAbs.includes(curIndex);
 
     //check it the next pile is empty and the color is different
     //and the reltaive move mode is active
@@ -375,7 +377,7 @@ export const kingMove = (typePawn, arrTD, gameManageState, relativeMoves) => {
 
     const colorDataSet = getDataFromDataSet(nextPileChild, 3);
 
-    if (!colorDataSet && !curThreat) newPossibleMove.push(pm);
+    if (!colorDataSet && !curThreatAbs) newPossibleMove.push(pm);
     if (colorDataSet && colorDataSet !== color) newPossibleMove.push(pm);
     else if (relativeMoves) newPossibleMove.push(pm);
   });
@@ -383,6 +385,7 @@ export const kingMove = (typePawn, arrTD, gameManageState, relativeMoves) => {
   //Check if the king did castle
   if (!castleState.didCastle) {
     const [rook1, rook2] = castleState.moveRooks;
+
     //Check the if there aren't player in the first and the sec nearby piles
     //for the both sides of the king
 

@@ -183,7 +183,7 @@ export const getSameValueBet2Arr = (arr1, arr2) => {
       if (el) return el;
     });
 
-  return makeArrayToSet(newArr);
+  return newArr;
   // return newArr;
 };
 

@@ -1,10 +1,8 @@
-import { checkThreatOnPiles } from "../Helpers/checkKingStatusHelpers.js";
 import {
   selectElement,
   editDataSet,
   makeArrayToSet,
 } from "../Helpers/utilitesFun.js";
-import { posibleMovementsObj } from "./posibleMovmentsRes.js";
 
 /**
  *
