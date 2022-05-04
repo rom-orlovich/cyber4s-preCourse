@@ -68,7 +68,7 @@ export const handleClickPawn = (
 
     // Set the new pos to the king
     if (type === "king") {
-      gameState.kingState[color].pos = dataInfo.split("-")[0];
+      gameState.kingState[color].pos = dataInfo.split("-")[0] * 1;
       setGameState(gameState);
     }
 

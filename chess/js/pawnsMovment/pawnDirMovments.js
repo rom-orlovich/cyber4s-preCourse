@@ -325,24 +325,26 @@ export const knightMove = (
   relativeMoves
 ) => {
   if (type !== "knight") return [];
-  return changes.map((change) => {
-    const CurIndex = curIndex * 1;
-    const NewIndex = checKnightMove(curIndex, CurIndex + change, arrTD);
-    //Check if the new pile is empty
-    const checkNextPileChild = arrTD[NewIndex];
-    if (!checkNextPileChild) return CurIndex;
+  return changes
+    .map((change) => {
+      const CurIndex = curIndex * 1;
+      const NewIndex = checKnightMove(curIndex, CurIndex + change, arrTD);
+      //Check if the new pile is empty
+      const checkNextPileChild = arrTD[NewIndex];
+      if (!checkNextPileChild) return CurIndex;
 
-    //Check if the new pile have img
-    const img = checkNextPileChild.firstElementChild;
-    if (!img) return NewIndex;
+      //Check if the new pile have img
+      const img = checkNextPileChild.firstElementChild;
+      if (!img) return NewIndex;
 
-    //Check if the new pile have knight with same color
-    // and if the reletive moves mode is active
-    //if it ture return cur index;
-    const colorDataSet = getDataFromDataSet(img, 3);
-    if (!relativeMoves && colorDataSet === color) return CurIndex;
-    else return NewIndex;
-  });
+      //Check if the new pile have knight with same color
+      // and if the reletive moves mode is active
+      //if it ture return cur index;
+      const colorDataSet = getDataFromDataSet(img, 3);
+      if (!relativeMoves && colorDataSet === color) return CurIndex;
+      else return NewIndex;
+    })
+    .filter((pos) => pos !== curIndex * 1);
 };
 
 export const kingMove = (typePawn, arrTD, gameManageState, relativeMoves) => {
@@ -356,17 +358,18 @@ export const kingMove = (typePawn, arrTD, gameManageState, relativeMoves) => {
   const { kingState } = gameState;
   const kingStateByColor = kingState[color];
   const curPosisbleMove = kingStateByColor.possibleMoves;
-
   const curThreatArrAbs = kingStateByColor.absoluteThreats;
+  const curThreatArrRel = kingStateByColor.relativeThreats;
   const castleState = kingStateByColor.castleState;
   const curIndex = index * 1;
   const newPossibleMove = [];
   let curThreatAbs, curThreatRel, curThreatInPos;
-
+  // console.log(curPosisbleMove);
   curPosisbleMove.forEach((pm) => {
     // For each cur possible move, check if there is some threat on the king
     //and if the threat is same as his possible move
     curThreatAbs = curThreatArrAbs.includes(pm);
+    curThreatRel = curThreatArrRel.includes(curIndex);
 
     curThreatInPos = curThreatArrAbs.includes(curIndex);
 
@@ -376,7 +379,7 @@ export const kingMove = (typePawn, arrTD, gameManageState, relativeMoves) => {
     const nextPileChild = getNextPileChild(curIndex, pm, arrTD);
 
     const colorDataSet = getDataFromDataSet(nextPileChild, 3);
-
+    // console.log("curThreatAbs", curThreatArrAbs, "pm", pm);
     if (!colorDataSet && !curThreatAbs) newPossibleMove.push(pm);
     if (colorDataSet && colorDataSet !== color) newPossibleMove.push(pm);
     else if (relativeMoves) newPossibleMove.push(pm);
@@ -398,9 +401,8 @@ export const kingMove = (typePawn, arrTD, gameManageState, relativeMoves) => {
 
   // The check if there is some threat on the king
   //and change the state of check
-  if (curThreatInPos) {
-    kingStateByColor.stateCheck = "check";
-  } else kingStateByColor.stateCheck = "";
+
+  if (curThreatInPos || curThreatRel) kingStateByColor.stateCheck = "check";
 
   //Update the state of the game
   kingStateByColor.newPossibleMoves = newPossibleMove;

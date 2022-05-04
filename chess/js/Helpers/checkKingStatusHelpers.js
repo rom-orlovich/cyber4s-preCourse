@@ -63,9 +63,9 @@ export const checkPossibleThreatOfKing = (
     const sameValue = getSameValueBet2Arr(pawnsPossibleMove, theCheckedMoves);
 
     if (sameValue.length === 0) return;
-
+    // console.log(data, pawnsPossibleMove, relative);
     threatArr = [...threatArr, ...sameValue];
-    console.log(threatArr);
+
     dataPawnMove.push(data);
   });
   return [threatArr, dataPawnMove];
