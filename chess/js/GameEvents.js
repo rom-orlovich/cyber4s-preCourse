@@ -51,7 +51,7 @@ export class GameEvents {
       (e) => {
         const target = e.target;
         const dataSetInfo = target?.dataset?.typePawn;
-
+        if (!target) return;
         //Check if the target is pawn with dataset of typePawn otherwise -exit from the function
         if (!dataSetInfo) return;
         console.log(dataSetInfo);
@@ -63,6 +63,7 @@ export class GameEvents {
 
         //If the color of the target that was clicked is different from the active player
         // -exit from the function
+
         if (targetColor !== gameState.activePlayer) return;
         const defenseMovePlayer =
           kingState.pawnCanDefense.includes(dataSetInfo);
@@ -113,7 +114,6 @@ export class GameEvents {
         const dataSetInfo = target?.dataset?.typePawn;
         if (!dataSetInfo) return;
 
-        console.log(dataSetInfo);
         const [curIndex, type, _, targetColor] = dataSetInfo.split("-");
         const gameState = this.getGameState();
         const kingState = gameState.kingState[targetColor];

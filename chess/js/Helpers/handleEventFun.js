@@ -47,34 +47,43 @@ export const handleClickPawn = (
   const [getGameState, setGameState] = gameManageState;
   const gameState = getGameState();
 
-  posibleMoves.forEach((el) => {
-    arrTD[el].addEventListener("click", (e) => {
-      //Check if the td is clicked
-      const target = e.currentTarget;
+  const posibleMovesFun = (e) => {
+    //Check if the td is clicked
+    const target = e.currentTarget;
 
-      if (!target) return;
+    if (!target) return;
+    const pos = target.dataset.indexPile;
+    //Move pawn to other piles and return the current dataset
+    const indexPosTDClick = target?.dataset?.indexPos;
+    let dataInfo = movePawnToOtherPile(
+      typePawn,
+      indexPosTDClick,
+      gameManageState
+    );
 
-      //Move pawn to other piles and return the current dataset
-      const indexPosTDClick = target?.dataset?.indexPos;
-      let dataInfo = movePawnToOtherPile(
-        typePawn,
-        indexPosTDClick,
-        gameManageState
-      );
+    //If there is no dataset that return from the move function , the function will exit
+    if (!dataInfo) return;
+    // Set the new number moves of the pawns if he was moved
+    if (type === "pawn") editDatasSetByQuery(pos * 1, 4, "1");
 
-      //If there is no dataset that return from the move function , the function will exit
-      if (!dataInfo) return;
-      // Set the new number moves of the pawns if he was moved
-      if (type === "pawn") editDatasSetByQuery(el, 4, "1");
+    // Set the new pos to the king
+    if (type === "king") {
+      gameState.kingState[color].pos = dataInfo.split("-")[0];
+      setGameState(gameState);
+    }
 
-      // Set the new pos to the king
-      if (type === "king") {
-        gameState.kingState[color].pos = dataInfo.split("-")[0];
-        setGameState(gameState);
-      }
+    // see the function in GameEvent file on line 96
+    handleAfterClick(dataInfo, posibleMoves);
 
-      // see the function in GameEvent file on line 96
-      handleAfterClick(dataInfo, posibleMoves);
+    posibleMoves.forEach((pos) => {
+      arrTD[pos].removeEventListener("click", activePossibleMoveFun);
     });
+  };
+
+  function activePossibleMoveFun(e) {
+    posibleMovesFun(e);
+  }
+  posibleMoves.forEach((pos) => {
+    arrTD[pos].addEventListener("click", activePossibleMoveFun);
   });
 };
